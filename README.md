@@ -1,17 +1,17 @@
-# astraa / Portfolio Experience
+# astraa / From zero
 
-A cinematic first portfolio, built from an empty repository. It uses a dark metallic orbital world, ivory editorial type, and one lime accent. Content reflects astraa's actual starting point: this portfolio is the first project; the other two spaces are explicitly pending work.
+A first portfolio built from an empty repository. The experimental studio direction uses Archivo typography, an ivory cover, black editorial spreads, lime interaction fields, and one original six-arm identity mark. There is one real project: this portfolio, presented through Interface, Motion, and System studies.
 
 ## Run
 
-Node.js 22.18+ is recommended (the small test runner uses native TypeScript stripping).
+Use Node.js 22.18+; the tests use native TypeScript stripping.
 
 ```sh
 npm ci
 npm run dev
 ```
 
-Open http://localhost:3000. For production:
+Production checks and preview:
 
 ```sh
 npm test
@@ -20,49 +20,40 @@ npm run build
 npm start
 ```
 
-The repository is prepared on the local `feat/cinematic-portfolio` branch. Publication and GitHub push are separate from this local deliverable.
+Open http://localhost:3000. Changes are local on `feat/cinematic-portfolio`; they have not been pushed or publicly deployed.
 
-## Content and visual controls
+## Edit
 
-- `src/data/portfolio.ts`: name, social links, project stories, technologies, journey, and background tabs. No invented client projects, experience, statistics, or education.
-- `src/lib/timeline.ts`: six contiguous checkpoint ranges, overall scroll distance, timing, and seek math. Selected work receives 30% of the master timeline.
-- `src/app/globals.css`: centralized colors, typography, spacing, material, radii, layer order, and CSS motion tokens. Change `--accent` to recolor the entire experience.
-- `src/lib/use-master-timeline.ts`: desktop timeline and smooth, reversible media seeking. GSAP/ScrollTrigger/Lenis load only on desktop without reduced motion. Mobile and reduced motion use normal flow, static art, and independently controllable projects.
+- `src/data/portfolio.ts`: identity, project story, tools, learning notes, and background. Education details remain pending; client work and experience are not invented.
+- `src/lib/timeline.ts`: six contiguous checkpoints and shared progress, project-view, and media-seek math.
+- `src/lib/use-master-timeline.ts`: GSAP/ScrollTrigger/Lenis coordination. Desktop uses sticky scenes and actual bidirectional `video.currentTime` seeking. It never calls `video.play()`.
+- `src/components/projects.tsx`: three views of one project, not three claimed projects. Native buttons, arrow keys, Home/End, and horizontal gestures control the sourced perspective track.
+- `src/app/globals.css`: palette, spacing, rail, compositions, and explicit responsive layouts.
 
-Desktop scroll advances or reverses the six-second camera sequence; it never calls `video.play()`. A time-based interpolation smooths the target, avoids overlapping seeks, and stays below the duration endpoint. Checkpoint navigation and project controls use the same timeline. The poster remains usable when video loading fails or the connection requests reduced data.
+Mobile and reduced-motion use normal document flow, static art, and independent view controls. Desktop-only motion libraries load dynamically. Video is also skipped for Save-Data and 2G. Native dialogs contain focus, close with Escape, restore focus, and preserve scroll position. The system motion preference can change while the page is open.
 
-The project gallery supports ordinary page scrolling, horizontal pointer/touch gestures, Left/Right keys, and visible buttons. The fullscreen native dialog traps focus, closes with Escape, restores focus, and retains the page's scroll position. Journey files and Experience/Education/Now tabs work with the keyboard.
+## Real source integrations
 
-## Contact delivery
+Adapted source is retained from VengeanceUI GlassDock, PerspectiveCarousel, and SolarSystem; Animate UI Cursor/CursorFollow; ForgeUI Animated Tabs; and Nicolas Jesenberger's Uiverse physical toggle. The vertical rail retains the directional spring tooltip. The toolkit retains 3D orbit and inverse billboard mechanics with verified tool logos. Tabs retain ForgeUI's moving highlight. The native pointer remains available alongside the decorative follower.
 
-The form has native validation, server validation, loading/error/success states, a honeypot, an origin check, request-size bounds, and delivery timeouts.
+Each integration has a source comment. Exact source links, authors, and complete notices are in [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md). UILora source is account/license gated and is not included. No additional runtime dependencies were introduced for the redesign. These integrations belong to a personal website, not a redistributable component library or template product.
 
-**Delivery is intentionally unconfigured because no receiving email/provider was supplied.** Submit displays an honest error and provides copy/save-draft controls. GitHub remains a working contact alternative.
+## Original motion study
 
-To enable delivery, copy `.env.example` to `.env.local`, set `CONTACT_WEBHOOK_URL` to a server-side provider that accepts `{ name, email, message }` JSON, and optionally set `CONTACT_WEBHOOK_TOKEN`. A successful provider response confirms acceptance, not that a recipient has read the message. Add hosting-edge rate limiting/bot protection before opening a configured receiver publicly.
+`public/media/study.mp4` is 598,370 bytes: H.264, 960 square, six seconds, 30 fps, a keyframe every four frames, and fast-start metadata. `study-poster.webp` is 4,118 bytes. The authored six-arm geometry rotates with a mild perspective tilt and extrusion. It is a pre-rendered geometric study, not a real-time WebGL simulation.
 
-## Animation ownership
+The video remains paused while one smoothed timeline seeks it forward or backward. Seeking is bounded below the endpoint and avoids overlapping requests. Poster art remains if loading fails. GSAP owns chapter transforms; Motion owns nested interaction elements; CSS owns the orbits. Observers, tickers, listeners, and smooth scrolling clean up on mode changes and unmount. Hidden-page and offscreen orbit work pauses.
 
-GSAP owns chapter entrances, the hero exit, scene shading, orbital exit, and master scroll progress. Motion owns nested project slide positions, project-button hover, magnetic CTA, cursor, dialog entrance, and tab transitions. CSS owns material surfaces and orbit/billboard rotation. A native matchMedia subscription updates all controls when the system reduced-motion preference changes while the page is open. Two systems do not control the same transform or opacity on the same element. Listeners, observers, contexts, tickers, and Lenis are cleaned up when modes change or components unmount; hidden-page and offscreen orbit work pauses.
+The original generator is `tools/generate-study.py`. Optional regeneration requires Python, Pillow, and FFmpeg on PATH (or `FFMPEG_BINARY`):
 
-## Media
+```sh
+python tools/generate-study.py
+```
 
-`public/media/orbital.webp` is approximately 100 KB; `orbital.mp4` is approximately 3.4 MB. The video is H.264, 1280×720, 30 fps, with a keyframe every four frames and fast-start metadata for seeking. It is a deliberate camera push/pan through the generated orbital artwork, not a claimed real-time 3D simulation. Touch/mobile, reduced-motion, Save-Data, and 2G modes avoid loading the video.
+## Contact
 
-The artwork was generated with the built-in image-generation tool. Final prompt: “Wide photorealistic cinematic 3D art: one massive finely ribbed dark brushed-chrome orbital torus, tilted diagonally in a #050505 void, silver/ivory rim light, subtle lime reflections, center-right composition with empty dark space at left; no text, logos, or UI.” The WebP and short video are the retained project assets.
+The native form has client/server validation, loading/error/success states, a honeypot, origin checks, size bounds, and delivery timeouts. **Delivery needs configuration:** no receiving email/provider was supplied. An unconfigured submission explicitly reports that it was not sent and offers Copy draft / Save draft. The GitHub link works independently.
 
-## Actual component integrations
+Copy `.env.example` to `.env.local` and configure `CONTACT_WEBHOOK_URL` with a provider accepting `{ name, email, message }` JSON. `CONTACT_WEBHOOK_TOKEN` is optional. Provider acceptance confirms submission, not that the recipient has read it. Use hosting-edge rate limiting when publicly enabling the receiver.
 
-Six interactions now contain adapted, inspected source from the supplied libraries: VengeanceUI GlassDock, PerspectiveCarousel, and SolarSystem; Animate UI Cursor/CursorFollow; ForgeUI Animated Tabs; and Uiverse’s physical toggle by Nicolas Jesenberger. Each has a source comment and its original notice in [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md). UILora source is account/licence gated and is not included.
-
-The dock retains shared directional spring tooltips. The gallery uses the original moving perspective track and adds responsive measuring and custom artwork. Toolkit nodes retain orbit/billboard counter-rotation, use real tool logos, and include an accessible motion toggle. Tabs use ForgeUI’s moving shared highlight. The cursor uses Animate UI’s follower spring and presence, while preserving the native pointer.
-
-The orbital artwork remains the cinematic environment. Identity uses an etched monogram plate. The first project uses an HTML miniature of the real portfolio; pending projects use separate ink-grid and ivory-canvas compositions. Matte content surfaces, optical dock glass, and a physical conversation CTA use one consistent palette.
-
-These components are incorporated into a personal website. This repository is not licensed as a redistributable component collection or template product; retain the individual license restrictions.
-
-## Verification
-
-Production build and TypeScript checks pass. Native Node tests cover contiguous checkpoints, project boundaries, forward/backward smoothing, seek bounds, and contact input validation. Browser QA covers desktop navigation, reversible video, toolkit selection, gallery controls, modal focus/Escape/scroll restoration, filesystem selection, keyboard tabs, contact draft recovery, 320/390/768/1024 px layouts, and reduced motion. Contact delivery success and upstream failure were verified against a local mock receiver; no external message was sent.
-
-Automated accessibility scans found no WCAG A/AA violations in the scanned desktop and mobile states. These scans do not replace a complete manual accessibility audit. Lighthouse results are local lab measurements and can vary with hosting and hardware; see the included verification report for the final scores and measured limitations.
+See [VERIFICATION.md](./VERIFICATION.md) for the current production checks and measurement limits.

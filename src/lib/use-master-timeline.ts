@@ -42,7 +42,7 @@ export function useMasterTimeline(projectCount: number) {
       gsap.registerPlugin(ScrollTrigger);
       const connection = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }).connection;
       const loadVideo = !connection?.saveData && connection?.effectiveType !== '2g';
-      if (loadVideo && element) { element.style.display = ''; element.src = '/media/orbital.mp4'; element.load(); }
+      if (loadVideo && element) { element.style.display = ''; element.src = '/media/study.mp4'; element.load(); }
       let lastChapter: Checkpoint = 'hero'; let lastProject = 0;
       let current = 0; let previousTime = 0;
       const workRange = checkpoints.find(point => point.id === 'projects')!;
@@ -72,34 +72,31 @@ export function useMasterTimeline(projectCount: number) {
         } });
         progress.current = master.progress;
         // GSAP owns scene transforms. Motion owns only nested interaction elements.
-        gsap.from('.hero-word', { yPercent: 110, duration: 1.15, stagger: 0.12, ease: 'power4.out', delay: 0.4 });
-        gsap.from('.hero-meta', { opacity: 0, y: 12, duration: 0.7, stagger: 0.1, delay: 0.85 });
+        gsap.from('.hero-word', { y: 35, opacity: 0, duration: 0.9, ease: 'power4.out', delay: 0.35 });
+        gsap.from('.hero-meta', { opacity: 0, y: 12, duration: 0.6, stagger: 0.08, delay: 0.6 });
         const entrance = (chapterId: string) => ({ trigger: `#${chapterId}`, start: 'top 85%', end: 'top 18%', scrub: 0.55 });
         gsap.timeline({ scrollTrigger: entrance('about') })
-          .from('.about-heading', { y: 70, opacity: 0, ease: 'power2.out' }, 0)
-          .from('.identity-art', { y: 90, rotation: -6, opacity: 0, ease: 'power2.out' }, 0.08)
-          .from('.about-intro, .about-location, .about-status', { y: 45, opacity: 0, stagger: 0.1, ease: 'power2.out' }, 0.15);
+          .from('.about-origin', { x: -60, opacity: 0, ease: 'power2.out' }, 0)
+          .from('.about-intro', { y: 60, opacity: 0, ease: 'power2.out' }, 0.08)
+          .from('.about-strip', { scaleX: 0.85, opacity: 0, ease: 'power2.out' }, 0.15);
         gsap.timeline({ scrollTrigger: entrance('stack') })
-          .from('.toolkit-copy', { y: 60, opacity: 0, ease: 'power2.out' }, 0)
-          .from('.toolkit-visual', { scale: 0.8, y: 50, opacity: 0, ease: 'power2.out' }, 0.1);
+          .from('.toolkit-heading', { y: 40, opacity: 0, ease: 'power2.out' }, 0)
+          .from('.toolkit-visual', { scale: 0.9, y: 30, opacity: 0, ease: 'power2.out' }, 0.1)
+          .from('.toolkit-panel', { x: 60, opacity: 0, ease: 'power2.out' }, 0.15);
         gsap.timeline({ scrollTrigger: entrance('projects') })
           .from('.work-heading', { y: 50, opacity: 0, ease: 'power2.out' }, 0)
           .from('.work-gallery', { y: 100, opacity: 0, ease: 'power2.out' }, 0.12);
         gsap.timeline({ scrollTrigger: entrance('journey') })
           .from('.journey-heading', { y: 50, opacity: 0, ease: 'power2.out' }, 0)
-          .from('.file-system', { y: 65, opacity: 0, ease: 'power2.out' }, 0.1)
-          .from('.journey-tabs', { y: 45, opacity: 0, ease: 'power2.out' }, 0.25);
+          .from('.file-system', { x: -30, opacity: 0, ease: 'power2.out' }, 0.1)
+          .from('.field-reading', { y: 45, opacity: 0, ease: 'power2.out' }, 0.15);
         gsap.from('.contact-scene', { y: 70, opacity: 0, ease: 'power2.out', scrollTrigger: entrance('contact') });
-        const shade = element?.parentElement?.querySelector('.world-shade');
         const heroEnd = checkpoints.find(point => point.id === 'hero')!.end;
         const stackEnd = checkpoints.find(point => point.id === 'stack')!.end;
-        const contactStart = checkpoints.find(point => point.id === 'contact')!.start;
         gsap.timeline({ scrollTrigger: { trigger: root.current, start: 'top top', end: 'bottom bottom', scrub: 0.55 } })
-          .to('.hero-line-one', { xPercent: -28, opacity: 0, ease: 'none', duration: heroEnd * 0.6 }, heroEnd * 0.4)
-          .to('.hero-line-two', { xPercent: 22, opacity: 0, ease: 'none', duration: heroEnd * 0.6 }, heroEnd * 0.4)
-          .to(shade ?? [], { opacity: 0.75, duration: heroEnd * 2 / 3, ease: 'none' }, heroEnd * 2 / 3)
+          .to('.cover-name', { xPercent: -12, opacity: 0, ease: 'none', duration: heroEnd * 0.4 }, heroEnd * 0.6)
+          .to('.study-aperture', { rotation: 12, scale: 1.15, ease: 'none', duration: heroEnd }, 0)
           .to('.orbit-field', { scale: 1.25, opacity: 0, duration: 0.04, ease: 'none' }, stackEnd - 0.04)
-          .to(shade ?? [], { opacity: 0.35, duration: 0.08, ease: 'none' }, contactStart)
           .to({}, { duration: 0.04 }, 0.96);
         ScrollTrigger.refresh();
       }, root);

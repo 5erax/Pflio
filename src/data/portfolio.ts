@@ -9,36 +9,20 @@ export type Project = {
   slug: string; name: string; tagline: string; description: string; role: string;
   year: string; status: string; technologies: string[]; cover: string; media: string[];
   challenge: string; solution: string; implementation: string; result: string;
-  liveUrl?: string; repositoryUrl?: string; pending: boolean;
+  liveUrl?: string; repositoryUrl?: string;
 };
 
 export const projects: Project[] = [
   {
-    slug: 'portfolio-experience', name: 'First contact.', tagline: 'A PORTFOLIO, BUILT FROM ZERO',
+    slug: 'portfolio-experience', name: 'First build.', tagline: 'A PORTFOLIO, BUILT FROM ZERO',
     description: 'The first entry in an open-ended collection. This website is the starting point: a place to learn, experiment, and document what comes next.',
     role: 'Personal learning project', year: '2026', status: 'First iteration',
-    technologies: ['Next.js', 'React', 'TypeScript', 'GSAP'], cover: '/media/orbital.webp', media: ['/media/orbital.webp'],
+    technologies: ['Next.js', 'React', 'TypeScript', 'GSAP'], cover: '/media/study-poster.webp', media: ['/media/study-poster.webp'],
     challenge: 'Start with an empty repository and turn an ambitious visual idea into a working, accessible experience.',
-    solution: 'One cinematic world, one scroll timeline, and a small set of interactions that connect the story.',
+    solution: 'Six distinct compositions connected by one scroll timeline. A personal identity, an interactive toolkit, and three views of the same real project.',
     implementation: 'A seekable H.264 sequence follows smoothed scroll progress. Semantic sections, native dialogs, and a lighter mobile layout keep the experience usable.',
-    result: 'The portfolio you are exploring right now. The beginning of a learning journey, with no invented clients or performance claims.',
-    repositoryUrl: 'https://github.com/5erax/Pflio', pending: false,
-  },
-  {
-    slug: 'next-experiment', name: 'What comes next?', tagline: 'THE NEXT EXPERIMENT',
-    description: 'An open space for a future project. There is no released product here yet.',
-    role: 'To be decided', year: 'Pending', status: 'Pending project', technologies: [],
-    cover: '/media/orbital.webp', media: [], challenge: 'Pending a real project brief.',
-    solution: 'Pending implementation.', implementation: 'This space will hold real work as it is created.',
-    result: 'No result to report yet.', pending: true,
-  },
-  {
-    slug: 'open-canvas', name: 'An open canvas.', tagline: 'ROOM TO PLAY',
-    description: 'A reserved place for a future exploration. Not a completed project or a claim of experience.',
-    role: 'To be decided', year: 'Pending', status: 'Pending project', technologies: [],
-    cover: '/media/orbital.webp', media: [], challenge: 'Pending a real project brief.',
-    solution: 'Pending implementation.', implementation: 'New ideas will become entries here as the journey develops.',
-    result: 'No result to report yet.', pending: true,
+    result: 'The portfolio you are exploring right now. A working first project and a place to document the next steps.',
+    repositoryUrl: 'https://github.com/5erax/Pflio',
   },
 ];
 
@@ -55,7 +39,7 @@ export const technologies = [
 ];
 
 export const journey = [
-  { id: 'started', file: 'beginning.txt', title: 'Every journey has a first commit.', date: '2026', text: 'I am astraa. I am starting from zero, with curiosity and an empty repository. This is the beginning, not a polished history of things I have not done.' },
+  { id: 'started', file: 'beginning.txt', title: 'Every journey has a first commit.', date: '2026', text: 'I am astraa. I started with curiosity and an empty repository. A first commit, a place to experiment, and a commitment to keep making.' },
   { id: 'portfolio', file: 'portfolio.tsx', title: 'A place to build in public.', date: '2026', text: 'This portfolio is the first project. A personal space for experimenting with code, interaction, and visual storytelling.' },
   { id: 'next', file: 'next-step.todo', title: 'Keep making. Keep learning.', date: 'Next', text: 'The next milestone has not been written yet. Future projects and learning notes will live here when they exist.' },
 ];

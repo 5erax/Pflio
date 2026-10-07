@@ -11,11 +11,14 @@ const icons = [HouseSimple, User, Planet, SquaresFour, FolderOpen, ArrowUpRight]
 export function Dock({ active, navigate }: { active: Checkpoint; navigate: (id: Checkpoint) => void }) {
   const dock = useRef<HTMLElement>(null);
   const reduced = useReducedMotion();
-  const [hovered, setHovered] = useState<{ index: number; center: number; direction: number } | null>(null);
+  const [hovered, setHovered] = useState<{ index: number; x: number; y: number; direction: number } | null>(null);
   const showTooltip = (index: number, button: HTMLButtonElement) => {
     const buttonBox = button.getBoundingClientRect();
     const dockBox = dock.current!.getBoundingClientRect();
-    setHovered(previous => ({ index, center: buttonBox.left - dockBox.left + buttonBox.width / 2,
+    const horizontal = dockBox.width > dockBox.height;
+    setHovered(previous => ({ index,
+      x: horizontal ? buttonBox.left - dockBox.left + buttonBox.width / 2 : dockBox.width + 12,
+      y: horizontal ? -54 : buttonBox.top - dockBox.top + buttonBox.height / 2 - 16,
       direction: previous && previous.index !== index ? (index > previous.index ? 1 : -1) : 0 }));
   };
   const clearTooltip = () => setHovered(null);
@@ -37,15 +40,16 @@ export function Dock({ active, navigate }: { active: Checkpoint; navigate: (id: 
         onFocus={event => showTooltip(index, event.currentTarget)}
         animate={{ scale: reduced ? 1 : isHovered ? 1.1 : 1, y: reduced ? 0 : isHovered ? -3 : 0 }}
         whileTap={reduced ? undefined : { scale: 0.95 }} transition={{ type: 'spring', stiffness: 300, damping: 24 }}>
-        <Icon size={20} weight={active === point.id ? 'fill' : 'regular'} aria-hidden />
+        <span className="dock-number" aria-hidden>0{index + 1}</span>
+        <Icon className="dock-icon" size={20} weight={active === point.id ? 'fill' : 'regular'} aria-hidden />
         <span className="dock-dot" aria-hidden />
       </motion.button>;
     })}
     <AnimatePresence>
       {hovered !== null && <motion.div className="dock-tooltip-shell" aria-hidden
-        initial={{ opacity: 0, scale: reduced ? 1 : 0.92, y: reduced ? -54 : 12, x: hovered.center }}
-        animate={{ opacity: 1, scale: 1, y: -54, x: hovered.center }}
-        exit={{ opacity: 0, scale: reduced ? 1 : 0.92, y: reduced ? -54 : 12 }}
+        initial={{ opacity: 0, scale: reduced ? 1 : 0.92, y: hovered.y, x: hovered.x }}
+        animate={{ opacity: 1, scale: 1, y: hovered.y, x: hovered.x }}
+        exit={{ opacity: 0, scale: reduced ? 1 : 0.92 }}
         transition={reduced ? { duration: 0 } : { type: 'spring', stiffness: 120, damping: 18 }}>
         <div className="dock-tooltip-surface"><div className="dock-tooltip-clip">
           <AnimatePresence mode="popLayout" custom={hovered.direction}>

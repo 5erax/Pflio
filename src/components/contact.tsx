@@ -25,7 +25,7 @@ export function Contact({ open, close, onOpen }: { open: boolean; close: () => v
     const anchor = document.createElement('a'); anchor.href = url; anchor.download = 'conversation-with-astraa.txt'; anchor.click(); URL.revokeObjectURL(url);
   }
   return <Dialog open={open} onClose={close} titleId="contact-title" onOpen={onOpen}>
-    <div className="contact-form-wrap"><p className="mono accent">A NEW CONVERSATION</p><h2 id="contact-title">Let’s make<br /><i>a beginning.</i></h2>
+    <div className="contact-form-wrap"><h2 id="contact-title">Start a<br />conversation.</h2>
       {state === 'success' ? <div className="form-success" role="status"><ArrowUpRight size={48} /><p>{message}</p><button className="text-link" onClick={close}>Back to the experience</button></div> : <form onSubmit={submit}>
         <div className="form-row"><label>Your name<input name="name" autoComplete="name" required minLength={2} maxLength={100} placeholder="How should I call you?" /></label><label>Your email<input name="email" type="email" autoComplete="email" required maxLength={254} placeholder="you@example.com" /></label></div>
         <label>What are we building?<textarea name="message" required minLength={10} maxLength={5000} rows={4} placeholder="An idea, a collaboration, or just a hello..." /></label>

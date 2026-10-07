@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { useReducedMotion } from '@/lib/use-reduced-motion';
 import { ArrowUpRight, Asterisk } from '@phosphor-icons/react';
-import { profile, technologies } from '@/data/portfolio';
+import { profile, projects, technologies } from '@/data/portfolio';
 import type { Checkpoint } from '@/lib/timeline';
 
 // Adapted from Vengeance UI SolarSystem (MIT), by Ashutosh:
@@ -17,6 +17,9 @@ export function TechnologyUniverse({ navigate }: { navigate: (id: Checkpoint) =>
   const [paused, setPaused] = useState(false);
   const field = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion();
+  const technology = technologies[selected];
+  const selectedLogo = brandLogos[technology.name];
+  const usedProject = projects.find((project) => technology.projects.includes(project.slug));
 
   useEffect(() => {
     const element = field.current;
@@ -26,57 +29,72 @@ export function TechnologyUniverse({ navigate }: { navigate: (id: Checkpoint) =>
     observer.observe(element);
     hidden();
     document.addEventListener('visibilitychange', hidden);
-    return () => { observer.disconnect(); document.removeEventListener('visibilitychange', hidden); };
+    return () => {
+      observer.disconnect();
+      document.removeEventListener('visibilitychange', hidden);
+    };
   }, []);
 
   return <div className="toolkit-layout">
-    <div className="toolkit-copy">
-      <span className="chapter-marker mono">02 / THE TOOLS BEHIND THE EXPERIENCE</span>
-      <h2>A growing<br /><i>universe.</i></h2>
-      <p>Tools I’m exploring.<br />A toolkit taking shape.</p>
-      <div className="technology-detail" aria-live="polite">
-        <span className="mono accent">IN THIS EXPERIENCE / 0{selected + 1}</span>
-        <h3>{technologies[selected].name}</h3>
-        <p>{technologies[selected].detail}</p>
-        <button className="text-link" onClick={() => navigate('projects')}>See it in action <ArrowUpRight size={18} aria-hidden /></button>
-      </div>
-    </div>
-    <div className="toolkit-visual">
-      <div ref={field} className="orbit-field solar-system" data-paused={paused || Boolean(reduced)} role="group" aria-label="Tools used in this portfolio">
-        <div className="orbit-axis" aria-hidden />
+    <header className="toolkit-heading">
+      <h2>In use.</h2>
+      <span className="toolkit-index mono">01 / {String(technologies.length).padStart(2, '0')}</span>
+    </header>
+
+    <div className="toolkit-visual toolkit-diagram">
+      <div ref={field} className="orbit-field solar-system" data-paused={paused || Boolean(reduced)} role="group" aria-label="Select a tool used in this portfolio">
+        <div className="orbit-axis" aria-hidden="true" />
         <div className="solar-plane">
-          {[0, 1, 2].map(group => <div key={group} className={`solar-ring ring-${group}`} aria-hidden />)}
-          {[0, 1, 2].map(group => technologies.filter(technology => technology.group === group).map((technology, position) => {
-            const index = technologies.indexOf(technology);
+          {[0, 1, 2].map((group) => <div key={group} className={`solar-ring ring-${group}`} aria-hidden="true" />)}
+          {[0, 1, 2].map((group) => technologies.filter((tool) => tool.group === group).map((tool, position) => {
+            const index = technologies.indexOf(tool);
             const angle = position * 120 + group * 23;
             const duration = orbitDurations[group];
-            const logo = brandLogos[technology.name];
-            return <div key={technology.name} className={`solar-position ring-${group}`} data-selected={selected === index}
-              style={{ '--orbit-duration': `${duration}s`, '--orbit-delay': `${-duration * angle / 360}s`, '--orbit-angle': `${-angle}deg` } as CSSProperties}>
-              <span className="solar-beam" aria-hidden />
-              <button className={`technology-node solar-billboard ${selected === index ? 'selected' : ''}`}
-                aria-label={`${technology.name}: ${technology.detail}`} aria-pressed={selected === index}
-                onClick={() => setSelected(index)} onFocus={() => setSelected(index)} onMouseEnter={() => setSelected(index)}>
-                <svg className="technology-logo" viewBox={logo.viewBox} fill="currentColor" aria-hidden><path d={logo.path} /></svg>
-                <small>{technology.name}</small>
+            const logo = brandLogos[tool.name];
+            return <div key={tool.name} className={`solar-position ring-${group}`} data-selected={selected === index} style={{ '--orbit-duration': `${duration}s`, '--orbit-delay': `${-duration * angle / 360}s`, '--orbit-angle': `${-angle}deg` } as CSSProperties}>
+              <span className="solar-beam" aria-hidden="true" />
+              <button type="button" className={`technology-node solar-billboard ${selected === index ? 'selected' : ''}`} aria-label={`Explore ${tool.name}`} aria-pressed={selected === index} aria-controls="technology-inspector" onClick={() => setSelected(index)} onFocus={() => setSelected(index)}>
+                <svg className="technology-logo" viewBox={logo.viewBox} fill="currentColor" aria-hidden="true"><path d={logo.path} /></svg>
+                <small>{tool.name}</small>
               </button>
             </div>;
           }))}
         </div>
-        <div className="orbit-core"><Asterisk size={34} weight="light" aria-hidden /><span>{profile.name}</span><small>LEARNING CORE</small></div>
-        <span className="orbit-caption mono muted">IDEAS → TOOLS → SOMETHING REAL</span>
+        <div className="orbit-core" aria-hidden="true"><Asterisk size={78} weight="bold" /><span>{profile.name}</span></div>
+        <span className="orbit-caption mono">SELECT A TOOL</span>
       </div>
-      {/* Physical toggle adapted from Uiverse.io by njesenberger (MIT): https://uiverse.io/njesenberger/rude-stingray-22 */}
+
+      {/* Uiverse physical toggle by njesenberger (MIT), adapted to a labelled input:
+          https://uiverse.io/njesenberger/rude-stingray-22 */}
       <label className="orbit-motion">
-        <span className="mono muted">ORBIT MOTION</span>
+        <span className="mono">ORBIT MOTION</span>
         <span className="toggle-wrapper">
-          <input className="toggle-checkbox" type="checkbox" checked={!paused && !reduced} disabled={Boolean(reduced)} onChange={event => setPaused(!event.target.checked)} aria-label="Animate technology orbits" />
-          <span className="toggle-container" aria-hidden><span className="toggle-button"><span className="toggle-button-circles-container">
-            {Array.from({ length: 12 }, (_, index) => <i key={index} className="toggle-button-circle" />)}
-          </span></span></span>
+          <input className="toggle-checkbox" type="checkbox" checked={!paused && !reduced} disabled={Boolean(reduced)} onChange={(event) => setPaused(!event.target.checked)} aria-label="Animate technology orbits" />
+          <span className="toggle-container" aria-hidden="true"><span className="toggle-button"><span className="toggle-button-circles-container">{Array.from({ length: 12 }, (_, index) => <i key={index} className="toggle-button-circle" />)}</span></span></span>
         </span>
-        <span className="mono muted">{reduced ? 'REDUCED MOTION' : paused ? 'PAUSED' : 'ON'}</span>
+        <span className="mono">{reduced ? 'REDUCED MOTION' : paused ? 'PAUSED' : 'ON'}</span>
       </label>
     </div>
+
+    <aside id="technology-inspector" className="toolkit-panel" aria-label="Selected tool">
+      <div className="toolkit-selected" aria-live="polite" aria-atomic="true">
+        <span className="toolkit-selected-index mono">TOOL / {String(selected + 1).padStart(2, '0')}</span>
+        <div className="toolkit-selected-brand">
+          <svg className="technology-logo" viewBox={selectedLogo.viewBox} fill="currentColor" aria-hidden="true"><path d={selectedLogo.path} /></svg>
+          <h3>{technology.name}</h3>
+        </div>
+        <p className="toolkit-description">{technology.detail}.</p>
+      </div>
+
+      <div className="toolkit-tool-picker" role="group" aria-label="Choose a technology">
+        {technologies.map((tool, index) => <button key={tool.name} type="button" aria-pressed={selected === index} aria-controls="technology-inspector" onClick={() => setSelected(index)}><span className="mono">{String(index + 1).padStart(2, '0')}</span>{tool.name}</button>)}
+      </div>
+
+      {usedProject && <div className="toolkit-project">
+        <span className="mono">USED IN THIS BUILD</span>
+        <button type="button" className="toolkit-project-link" onClick={() => navigate('projects')}><span>{usedProject.name}</span><ArrowUpRight size={23} aria-hidden="true" /></button>
+        {usedProject.repositoryUrl && <a className="toolkit-source-link mono" href={usedProject.repositoryUrl} target="_blank" rel="noreferrer">View source<ArrowUpRight size={15} aria-hidden="true" /></a>}
+      </div>}
+    </aside>
   </div>;
 }

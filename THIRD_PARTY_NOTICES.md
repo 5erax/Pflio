@@ -6,7 +6,7 @@ Source inspected and adapted on 2026-10-08:
 
 | Application component | Original source | Adaptation retained |
 | --- | --- | --- |
-| Chapter dock | [VengeanceUI GlassDock](https://raw.githubusercontent.com/Ashutoshx7/VengeanceUI/main/public/r/glass-dock.json) | Shared spring tooltip, directional text presence, hover lift; native buttons and Phosphor replace custom icon machinery |
+| Chapter rail | [VengeanceUI GlassDock](https://raw.githubusercontent.com/Ashutoshx7/VengeanceUI/main/public/r/glass-dock.json) | Shared spring tooltip, directional text presence, hover lift; native buttons and Phosphor replace custom icon machinery |
 | Project gallery | [VengeanceUI PerspectiveCarousel](https://raw.githubusercontent.com/Ashutoshx7/VengeanceUI/main/public/r/perspective-carousel.json) | Controlled moving flex track, per-slide rotation, spring, keyboard selection; responsive sizing, swipe, reduced motion, custom art added |
 | Toolkit universe | [VengeanceUI SolarSystem](https://raw.githubusercontent.com/Ashutoshx7/VengeanceUI/main/src/components/ui/solar-system.tsx) | CSS 3D orbit and inverse billboard rotations, staggered negative delays; real tool SVGs and native selection added |
 | Contextual cursor | [Animate UI Cursor primitive](https://raw.githubusercontent.com/imskyleen/animate-ui/main/apps/www/registry/primitives/animate/cursor/index.tsx) | Cursor/presence, measured follower offsets, spring 500/50/0; fixed global use, native pointer retained |
@@ -114,5 +114,3 @@ You may NOT:
 - Claim this code or derived components as your own work.
 
 This license grants usage rights, not redistribution rights.
-
-
