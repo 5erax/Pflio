@@ -1,10 +1,11 @@
 'use client';
+import { useReducedMotion } from '@/lib/use-reduced-motion';
 import { useEffect, useRef, type ReactNode } from 'react';
-import { motion, useReducedMotion } from 'motion/react';
+import { motion } from 'motion/react';
 import { X } from '@phosphor-icons/react';
 import { motionTokens } from '@/lib/timeline';
 
-// Animate UI's immersive-dialog concept, implemented with the native focus-trapping primitive.
+// Native dialog supplies focus containment, Escape handling, and top-layer rendering.
 export function Dialog({ open, onClose, titleId, children, onOpen }: {
   open: boolean; onClose: () => void; titleId: string; children: ReactNode;
   onOpen?: (open: boolean) => void;

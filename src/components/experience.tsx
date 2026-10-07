@@ -1,47 +1,23 @@
 'use client';
+import { useReducedMotion } from '@/lib/use-reduced-motion';
 import Image from 'next/image';
-import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react';
-import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
-import { ArrowDown, ArrowUp, ArrowUpRight, Asterisk, GithubLogo, ArrowRight } from '@phosphor-icons/react';
-import { profile, projects, technologies } from '@/data/portfolio';
+import { useCallback, useState, type CSSProperties } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
+import { ArrowDown, ArrowUp, ArrowUpRight, Asterisk, GithubLogo } from '@phosphor-icons/react';
+import { profile, projects } from '@/data/portfolio';
 import { checkpoints, SCROLL_UNITS, type Checkpoint } from '@/lib/timeline';
 import { useMasterTimeline } from '@/lib/use-master-timeline';
 import { Dock, Cursor, MagneticButton } from './ui/global-controls';
 import { ProjectGallery, ProjectDetail } from './projects';
 import { Journey } from './journey';
 import { Contact } from './contact';
+import { TechnologyUniverse } from './technology-universe';
 
 function Chapter({ id, children, className = '' }: { id: Checkpoint; children: React.ReactNode; className?: string }) {
   const range = checkpoints.find(point => point.id === id)!;
   return <section id={id} data-chapter className={`chapter chapter-${id} ${className}`} style={{ '--chapter-height': `${(range.end - range.start) * SCROLL_UNITS + (id === 'contact' ? 100 : 0)}dvh` } as CSSProperties}>
     <div className="scene">{children}</div>
   </section>;
-}
-
-function TechnologyUniverse({ navigate }: { navigate: (id: Checkpoint) => void }) {
-  const [selected, setSelected] = useState(0); const field = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const observer = new IntersectionObserver(([entry]) => field.current?.classList.toggle('orbit-visible', entry.isIntersecting), { threshold: 0.1 });
-    if (field.current) observer.observe(field.current);
-    const hidden = () => field.current?.classList.toggle('page-hidden', document.hidden);
-    document.addEventListener('visibilitychange', hidden);
-    return () => { observer.disconnect(); document.removeEventListener('visibilitychange', hidden); };
-  }, []);
-  return <div className="toolkit-layout">
-    <div className="toolkit-copy"><h2>A growing<br /><i>universe.</i></h2><p>Tools I’m exploring.<br />A toolkit, not a scoreboard.</p>
-      <div className="technology-detail" aria-live="polite"><span className="mono accent">IN THIS EXPERIENCE</span><h3>{technologies[selected].name}</h3><p>{technologies[selected].detail}</p><button className="text-link" onClick={() => navigate('projects')}>See it in action <ArrowUpRight size={18} aria-hidden /></button></div>
-    </div>
-    <div ref={field} className="orbit-field" role="group" aria-label="Technology universe">
-      <div className="orbit-axis" aria-hidden /><div className="orbit-core"><Asterisk size={36} weight="light" aria-hidden /><span>{profile.name}</span><small>LEARNING CORE</small></div>
-      {[0, 1, 2].map(group => <div key={group} className={`orbit-ring ring-${group}`}>
-        {technologies.filter(tech => tech.group === group).map((tech, position) => {
-          const index = technologies.indexOf(tech);
-          return <div key={tech.name} className="orbit-position" style={{ '--angle': `${position * 120 + group * 25}deg` } as CSSProperties}><button className={`technology-node ${selected === index ? 'selected' : ''}`} onClick={() => setSelected(index)} onFocus={() => setSelected(index)} onMouseEnter={() => setSelected(index)} aria-label={`${tech.short} ${tech.name}: ${tech.detail}`} aria-pressed={selected === index}><span aria-hidden>{tech.short}</span><small>{tech.name}</small></button></div>;
-        })}
-      </div>)}
-      <span className="orbit-caption mono muted">IDEAS → TOOLS → SOMETHING REAL</span>
-    </div>
-  </div>;
 }
 
 export function Experience() {
@@ -66,15 +42,15 @@ export function Experience() {
         <div className="hero-bottom hero-meta"><button className="scroll-invitation mono" onClick={() => system.navigate('about')}><span className="scroll-line" aria-hidden /><span>SCROLL TO ENTER</span><ArrowDown size={16} aria-hidden /></button><span className="mono muted">BASED IN {profile.location.toUpperCase()}<br /><span className="hero-coordinate">BEGINNING FROM ZERO</span></span><span className="hero-edition mono">PORTFOLIO / 2026</span></div>
       </Chapter>
       <Chapter id="about"><div className="about-layout"><div className="about-heading"><span className="chapter-marker mono">01 / THE HUMAN BEHIND THE SCREEN</span><h2>WHO<br />IS THIS<br /><i>GUY?</i></h2></div>
-        <div className="about-bento"><div className="identity-art"><Image src="/media/orbital.webp" alt="Abstract orbital sculpture, a visual identity for astraa" fill sizes="(max-width: 768px) 100vw, 35vw" /><span className="identity-art-letter">a<span>*</span></span><span className="mono">NO FINISH LINE. JUST A START.</span></div>
+        <div className="about-bento"><div className="identity-art" aria-label="Etched monogram identity plate for astraa"><div className="identity-etching" aria-hidden /><span className="identity-art-top mono">ASTRAA / IDENTITY STUDY — 001</span><span className="identity-art-letter" aria-hidden>a<span>*</span></span><span className="identity-registration" aria-hidden>+</span><div className="identity-art-bottom"><span className="mono">NO FINISH LINE.<br />JUST A START.</span><span className="identity-signature">astraa</span></div></div>
           <div className="about-intro"><span className="mono accent">HELLO, I’M {profile.name.toUpperCase()}.</span><h3>Curious by nature.<br />Builder in the making.</h3><p>{profile.intro}</p><a className="text-link" href={profile.github} target="_blank" rel="noreferrer"><GithubLogo size={20} aria-hidden /> Follow the journey <ArrowUpRight size={18} aria-hidden /></a></div>
-          <div className="about-location"><span className="mono muted">CURRENTLY</span><p>Learning.<br />Experimenting.<br /><i>Starting.</i></p><span className="mono">{profile.location} / GMT +7</span></div><div className="about-status"><Asterisk size={32} weight="light" aria-hidden /><p>{profile.availability}</p></div>
+          <div className="about-location"><span className="location-status mono"><span aria-hidden /> CURRENTLY IN THE MAKING</span><p>Learning.<br /><i>Every day.</i></p><span className="mono">{profile.location} / GMT +7</span></div><div className="about-status"><Asterisk size={32} weight="light" aria-hidden /><p>{profile.availability}</p></div>
         </div></div>
       </Chapter>
       <Chapter id="stack"><TechnologyUniverse navigate={system.navigate} /></Chapter>
       <Chapter id="projects"><div className="work-heading"><span className="chapter-marker mono">03 / THE EXPERIMENT LOG</span><h2>Small beginnings.<br /><i>Wide possibilities.</i></h2><p>One real first project. Space for what comes next.</p></div><ProjectGallery active={system.project} select={system.selectProject} open={setDetail} /></Chapter>
       <Chapter id="journey"><div className="journey-heading"><h2>MY JOURNEY<br />IS A <i>FILESYSTEM.</i></h2><p>A few files. An unwritten future.</p></div><Journey /></Chapter>
-      <Chapter id="contact"><div className="contact-scene"><span className="mono accent">THE NEXT CHAPTER STARTS WITH A HELLO</span><h2>HAVE<br /><i>AN IDEA?</i></h2><p>Let’s make something<br />we haven’t made before.</p><MagneticButton className="conversation-button" onClick={() => setContact(true)}><span>Start a conversation</span><ArrowUpRight size={27} aria-hidden /></MagneticButton><a className="contact-github text-link" href={profile.github} target="_blank" rel="noreferrer">Or find me on GitHub <ArrowUpRight size={17} aria-hidden /></a></div>
+      <Chapter id="contact"><div className="contact-scene"><span className="mono accent">THE NEXT CHAPTER STARTS WITH A HELLO</span><h2>HAVE<br /><i>AN IDEA?</i></h2><p>Let’s make something<br />we haven’t made before.</p><MagneticButton className="conversation-button" onClick={() => setContact(true)}><span>Start a conversation</span><span className="conversation-arrow"><ArrowUpRight size={24} aria-hidden /></span></MagneticButton><a className="contact-github text-link" href={profile.github} target="_blank" rel="noreferrer">Or find me on GitHub <ArrowUpRight size={17} aria-hidden /></a></div>
         <footer><span className="mono">© {profile.year} {profile.name.toUpperCase()}</span><span className="footer-note mono muted">BUILT WITH CURIOSITY. STILL LEARNING.</span><button className="text-link mono" onClick={() => system.navigate('hero')}>BACK TO START <ArrowUp size={16} aria-hidden /></button></footer>
       </Chapter>
     </main>

@@ -74,6 +74,22 @@ export function useMasterTimeline(projectCount: number) {
         // GSAP owns scene transforms. Motion owns only nested interaction elements.
         gsap.from('.hero-word', { yPercent: 110, duration: 1.15, stagger: 0.12, ease: 'power4.out', delay: 0.4 });
         gsap.from('.hero-meta', { opacity: 0, y: 12, duration: 0.7, stagger: 0.1, delay: 0.85 });
+        const entrance = (chapterId: string) => ({ trigger: `#${chapterId}`, start: 'top 85%', end: 'top 18%', scrub: 0.55 });
+        gsap.timeline({ scrollTrigger: entrance('about') })
+          .from('.about-heading', { y: 70, opacity: 0, ease: 'power2.out' }, 0)
+          .from('.identity-art', { y: 90, rotation: -6, opacity: 0, ease: 'power2.out' }, 0.08)
+          .from('.about-intro, .about-location, .about-status', { y: 45, opacity: 0, stagger: 0.1, ease: 'power2.out' }, 0.15);
+        gsap.timeline({ scrollTrigger: entrance('stack') })
+          .from('.toolkit-copy', { y: 60, opacity: 0, ease: 'power2.out' }, 0)
+          .from('.toolkit-visual', { scale: 0.8, y: 50, opacity: 0, ease: 'power2.out' }, 0.1);
+        gsap.timeline({ scrollTrigger: entrance('projects') })
+          .from('.work-heading', { y: 50, opacity: 0, ease: 'power2.out' }, 0)
+          .from('.work-gallery', { y: 100, opacity: 0, ease: 'power2.out' }, 0.12);
+        gsap.timeline({ scrollTrigger: entrance('journey') })
+          .from('.journey-heading', { y: 50, opacity: 0, ease: 'power2.out' }, 0)
+          .from('.file-system', { y: 65, opacity: 0, ease: 'power2.out' }, 0.1)
+          .from('.journey-tabs', { y: 45, opacity: 0, ease: 'power2.out' }, 0.25);
+        gsap.from('.contact-scene', { y: 70, opacity: 0, ease: 'power2.out', scrollTrigger: entrance('contact') });
         const shade = element?.parentElement?.querySelector('.world-shade');
         const heroEnd = checkpoints.find(point => point.id === 'hero')!.end;
         const stackEnd = checkpoints.find(point => point.id === 'stack')!.end;

@@ -43,7 +43,7 @@ To enable delivery, copy `.env.example` to `.env.local`, set `CONTACT_WEBHOOK_UR
 
 ## Animation ownership
 
-GSAP owns the hero exit, scene shading, orbital exit, and master scroll progress. Motion owns nested project slide positions, project-button hover, magnetic CTA, cursor, dialog entrance, and tab transitions. CSS owns appearance, inner image hover, and orbit rotation. Two systems do not control the same transform or opacity on the same element. Listeners, observers, contexts, tickers, and Lenis are cleaned up when modes change or components unmount; hidden-page and offscreen orbit work pauses.
+GSAP owns chapter entrances, the hero exit, scene shading, orbital exit, and master scroll progress. Motion owns nested project slide positions, project-button hover, magnetic CTA, cursor, dialog entrance, and tab transitions. CSS owns material surfaces and orbit/billboard rotation. A native matchMedia subscription updates all controls when the system reduced-motion preference changes while the page is open. Two systems do not control the same transform or opacity on the same element. Listeners, observers, contexts, tickers, and Lenis are cleaned up when modes change or components unmount; hidden-page and offscreen orbit work pauses.
 
 ## Media
 
@@ -51,13 +51,15 @@ GSAP owns the hero exit, scene shading, orbital exit, and master scroll progress
 
 The artwork was generated with the built-in image-generation tool. Final prompt: “Wide photorealistic cinematic 3D art: one massive finely ribbed dark brushed-chrome orbital torus, tilted diagonally in a #050505 void, silver/ivory rim light, subtle lime reflections, center-right composition with empty dark space at left; no text, logos, or UI.” The WebP and short video are the retained project assets.
 
-## Component reference notes
+## Actual component integrations
 
-No proprietary component source was copied. Behaviors were adapted into local components with the portfolio's own styling:
+Six interactions now contain adapted, inspected source from the supplied libraries: VengeanceUI GlassDock, PerspectiveCarousel, and SolarSystem; Animate UI Cursor/CursorFollow; ForgeUI Animated Tabs; and Uiverse’s physical toggle by Nicolas Jesenberger. Each has a source comment and its original notice in [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md). UILora source is account/licence gated and is not included.
 
-- [Vengeance UI Glass Dock](https://www.vengenceui.com/components/glass-dock), [Perspective Carousel](https://www.vengenceui.com/components/perspective-carousel), and [Solar System](https://www.vengenceui.com/components/solar-system): chapter navigation, spatial project selection, and toolkit orbits.
-- [Animate UI](https://animate-ui.com/): cursor states, immersive dialogs, files, and tabs. Native `<dialog>` supplies browser focus handling.
-- [ForgeUI](https://forgeui.in/), [Uiverse](https://uiverse.io/), and [UILora](https://www.uilora.com/): supporting component/material references. No premium source or extra runtime package was added from these libraries.
+The dock retains shared directional spring tooltips. The gallery uses the original moving perspective track and adds responsive measuring and custom artwork. Toolkit nodes retain orbit/billboard counter-rotation, use real tool logos, and include an accessible motion toggle. Tabs use ForgeUI’s moving shared highlight. The cursor uses Animate UI’s follower spring and presence, while preserving the native pointer.
+
+The orbital artwork remains the cinematic environment. Identity uses an etched monogram plate. The first project uses an HTML miniature of the real portfolio; pending projects use separate ink-grid and ivory-canvas compositions. Matte content surfaces, optical dock glass, and a physical conversation CTA use one consistent palette.
+
+These components are incorporated into a personal website. This repository is not licensed as a redistributable component collection or template product; retain the individual license restrictions.
 
 ## Verification
 

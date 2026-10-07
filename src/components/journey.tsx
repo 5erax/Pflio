@@ -1,11 +1,13 @@
 'use client';
+import { useReducedMotion } from '@/lib/use-reduced-motion';
 import { useRef, useState } from 'react';
-import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
+import { AnimatePresence, motion } from 'motion/react';
 import { FileText, FolderOpen, CaretDown, ArrowUpRight } from '@phosphor-icons/react';
 import { journey, panels } from '@/data/portfolio';
 import { motionTokens } from '@/lib/timeline';
 
-// Animate UI Files and Tabs behavior concepts, using semantic buttons and accessible tabs.
+// Animated Tabs adapted from https://forgeui.in/components/animated-tabs.
+// Copyright 2025 Aman Shakya. Application use only; see THIRD_PARTY_NOTICES.md.
 export function Journey() {
   const [selected, setSelected] = useState(0); const [tab, setTab] = useState(2);
   const [expanded, setExpanded] = useState(true); const tabs = useRef<(HTMLButtonElement | null)[]>([]);
@@ -22,9 +24,11 @@ export function Journey() {
     </div>
     <div className="journey-tabs"><div role="tablist" aria-label="Background" className="tab-list">
       {panels.map((panel, index) => <button key={panel.id} ref={el => { tabs.current[index] = el; }} id={`tab-${panel.id}`} role="tab" aria-selected={tab === index} aria-controls={`panel-${panel.id}`} tabIndex={tab === index ? 0 : -1} onClick={() => setTab(index)}
-        onKeyDown={event => { let next = index; if (event.key === 'ArrowRight') next = (index + 1) % panels.length; else if (event.key === 'ArrowLeft') next = (index + panels.length - 1) % panels.length; else if (event.key === 'Home') next = 0; else if (event.key === 'End') next = panels.length - 1; else return; event.preventDefault(); setTab(next); tabs.current[next]?.focus(); }}>{panel.name}</button>)}
+        onKeyDown={event => { let next = index; if (event.key === 'ArrowRight') next = (index + 1) % panels.length; else if (event.key === 'ArrowLeft') next = (index + panels.length - 1) % panels.length; else if (event.key === 'Home') next = 0; else if (event.key === 'End') next = panels.length - 1; else return; event.preventDefault(); setTab(next); tabs.current[next]?.focus(); }}>
+        {tab === index && <motion.span className="tab-highlight" layoutId="journey-active-tab" initial={false} transition={reduce ? { duration: 0 } : { type: 'spring', stiffness: 500, damping: 30 }} />}
+        <span>{panel.name}</span></button>)}
     </div><AnimatePresence mode="wait"><motion.div key={panels[tab].id} role="tabpanel" tabIndex={0} id={`panel-${panels[tab].id}`} aria-labelledby={`tab-${panels[tab].id}`} className="tab-panel"
-      initial={reduce ? false : { opacity: 0, y: 12, filter: 'blur(5px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }} exit={reduce ? undefined : { opacity: 0, y: -8, filter: 'blur(5px)' }} transition={{ duration: motionTokens.duration }}>
+      initial={reduce ? false : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={reduce ? undefined : { opacity: 0, y: -8 }} transition={{ duration: reduce ? 0 : motionTokens.duration }}>
       <h3>{panels[tab].title}</h3><p>{panels[tab].text}</p>
     </motion.div></AnimatePresence></div>
   </div>;
