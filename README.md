@@ -13,13 +13,13 @@ Production: `npm run build` then `npm start`. Validation: `npm run check` and `n
 
 ## Anime art and motion
 
-The hero pairs a Morevna cyberpunk background with a silent film excerpt. About uses Anastasia Mayzhegisheva’s Marya illustration. Original artists, sources, licenses and media changes appear in the site's **Visual credits** dialog and [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md).
+One native WebGL scene uses Morevna Project's ruined city and a short licensed Episode 3 excerpt. An authored 2.5D depth field moves foreground walls further than the skyline. Animated smoke, fog, light and three rain planes share one fragment pass. The radial transition adapts VengeanceUI's MIT RippleDisplacementSlider GLSL. Sources and licenses appear in **Visual credits** and [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md). The film and poster are CC BY-SA 4.0 adaptations; the city is CC BY 4.0, with shader parallax and atmospheric changes.
 
-The MP4 and extracted poster are adaptations under CC BY-SA 4.0; the two gallery artworks are CC BY 4.0. These licenses apply to the identified media, with no implied endorsement. Artwork is visually cropped through CSS and technically resized/encoded; no generated replacement art is used.
+About is a personal folio. Worlds, Interfaces and Systems select ProZ0, MediMate AI and FinGenie, with original profile cover art, implementation details, source links and actual case dialogs.
 
-Desktop uses one GSAP/ScrollTrigger timeline following Lenis's eased position. Static diagonal masks, camera transforms and continuous project travel follow that same position. Video stays paused and its `currentTime` follows the held hero. Scrolling backwards retraces both camera and film. There is no second scrub easing or per-frame React state. Orbit animation pauses through Lenis's existing scroll class, then resumes where it stopped.
+Desktop keeps one GSAP/ScrollTrigger timeline following Lenis's eased position. GPU transition, paused video seeking and continuous gallery travel read the same progress. There is no second scroll easing or per-frame React state. The GPU's render clock supplies ambient time and stops offscreen, in hidden tabs or when Pause atmosphere settles. A single pass caps the backbuffer at about 420,000 pixels and lowers resolution on a slow renderer. This is stylized 2.5D, not reconstructed 3D geometry.
 
-Mobile uses normal document flow and a native opt-in Play/Pause film button. Reduced motion uses posters and normal flow; live preference changes remove cinematic transforms. Save-Data/2G skips automatic video loading. A failed video keeps the poster visible. No artificial loading screen.
+Video textures update only on decoded frames or completed seeks. Context loss exposes DOM media; restoration rebuilds GPU resources. Reduced motion, Save-Data and absent WebGL retain real static media. Mobile uses normal flow and opt-in Play/Pause playback. Leaving the hero pauses the film. Save-Data/2G skips automatic video loading. No artificial loading screen or new runtime library.
 
 `anime-eye.mp4`: 960×540, three seconds, 30 fps, H.264 GOP4 and fast-start metadata. Static Next image imports give revised posters fresh content filenames.
 
@@ -27,13 +27,15 @@ Mobile uses normal document flow and a native opt-in Play/Pause film button. Red
 
 - `src/data/portfolio.ts`: personal details and real projects.
 - `src/components/experience.tsx`: anime composition, chapters and visual credits.
-- `src/lib/use-master-timeline.ts`: scroll camera, project travel and video seeking.
+- `src/components/anime-shader.tsx`: native GPU scene, depth camera and resource lifecycle.
+- `src/components/about.tsx`: profile and interactive project folio.
+- `src/lib/use-master-timeline.ts`: shared scroll progress, project travel and video seeking.
 - `src/lib/timeline.ts`: chapter ranges, continuous project position and media bounds.
 - `src/app/globals.css`: responsive composition and animation fallback.
 
 ## Browser regression
 
-`tools/verify-motion.mjs` checks reverse camera/film seeking, intermediate gallery positions during wheel input, real project dialogs, attribution, live reduced motion and mobile opt-in playback. Playwright is an optional QA dependency. Supply `PLAYWRIGHT_PATH` as a module URL and `PREVIEW_URL` to test a different server:
+`tools/verify-motion.mjs` checks actual WebGL draws and uniforms, atmosphere pause, context recovery, offscreen idle, reversible film seeking, folio cases, continuous gallery travel, live reduced motion and mobile/media/GPU fallbacks. Playwright is an optional QA dependency. Supply `PLAYWRIGHT_PATH` as a module URL and `PREVIEW_URL` to test a different server:
 
 ```sh
 node tools/verify-motion.mjs
@@ -41,7 +43,7 @@ node tools/verify-motion.mjs
 
 ## Component sources
 
-Application adaptations retain VengeanceUI GlassDock, PerspectiveCarousel and SolarSystem; Animate UI Cursor/CursorFollow; ForgeUI Animated Tabs; and Nicolas Jesenberger's Uiverse physical toggle. Notices and restrictions remain in [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md). UILora source requires account/license access and is not included. These are integrations into a personal application, not a component-library product. No runtime dependency was added for this revision.
+Application adaptations retain VengeanceUI GlassDock, PerspectiveCarousel, SolarSystem and RippleDisplacementSlider GLSL; Animate UI Cursor/CursorFollow; ForgeUI Animated Tabs; and Nicolas Jesenberger's Uiverse physical toggle. Notices and restrictions remain in [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md). UILora source requires account/license access and is not included. These are integrations into a personal application, not a component-library product. No runtime dependency was added for this revision.
 
 ## Contact
 

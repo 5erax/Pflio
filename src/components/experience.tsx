@@ -1,7 +1,6 @@
 'use client';
 import Image from 'next/image';
 import animeCity from '../../public/media/anime-city.webp';
-import animeMarya from '../../public/media/anime-marya.webp';
 import animeEye from '../../public/media/anime-eye.webp';
 import { useCallback, useState, type CSSProperties } from 'react';
 import { ArrowDown, ArrowUp, ArrowUpRight, GithubLogo } from '@phosphor-icons/react';
@@ -15,6 +14,8 @@ import { Journey } from './journey';
 import { Contact } from './contact';
 import { TechnologyUniverse } from './technology-universe';
 import { Dialog } from './ui/dialog';
+import { AnimeShader } from './anime-shader';
+import { About } from './about';
 
 function Chapter({ id, children, className = '' }: { id: Checkpoint; children: React.ReactNode; className?: string }) {
   const range = checkpoints.find(point => point.id === id)!;
@@ -36,25 +37,22 @@ export function Experience() {
       <Chapter id="hero">
         <div className="cover-top"><a className="hero-signature" href={profile.github} target="_blank" rel="noreferrer">astraa<span>↗</span></a><span className="mono">FULLSTACK DEVELOPER<br />VIETNAM / {profile.year}</span></div>
         <div className="anime-cover">
-          <div className="cover-intro"><span className="mono hero-kicker">INDEPENDENT MIND. CONNECTED SYSTEMS.</span><h1>Code, with<br />a <span>pulse.</span></h1><p>Expressive interfaces.<br />Thoughtful motion.<br />Built all the way through.</p><button className="cover-link" onClick={() => system.navigate('projects')}>Explore selected work <ArrowDown size={23} aria-hidden /></button></div>
+          <div className="cover-intro"><span className="mono hero-kicker">WEB / MOBILE / WORLDS</span><h1>From code<br />to <span>worlds.</span></h1><p>I’m astraa. I build interfaces,<br />the systems behind them,<br />and places to get lost in.</p><button className="cover-link" onClick={() => system.navigate('projects')}>Explore selected work <ArrowDown size={23} aria-hidden /></button></div>
           <div className="anime-composition" aria-label="Anime visual study featuring Morevna">
-            <div className="anime-city"><Image src={animeCity} alt="A ruined cyberpunk city from the Morevna anime" fill preload sizes="(max-width: 767px) 100vw, 55vw" /></div>
-            <span className="anime-frame-label mono">MOREVNA / A WORLD IN MOTION</span>
+            <div className="anime-city"><Image src={animeCity} alt="A ruined cyberpunk city from the Morevna anime" fill preload sizes="(max-width: 767px) 100vw, 60vw" /></div>
             <div className="anime-film">
               <Image src={animeEye} alt="" fill preload sizes="(max-width: 767px) 85vw, 40vw" className="world-poster" />
               <video ref={system.video} className="world-video" muted playsInline preload="none" poster={animeEye.src} disablePictureInPicture aria-hidden onLoadedData={event => { event.currentTarget.dataset.ready = 'true'; }} onPause={() => setPlaying(false)} onPlay={() => setPlaying(true)} onError={event => { event.currentTarget.style.display = 'none'; setPlaying(false); }} />
-              <span className="anime-film-corner" aria-hidden>↗</span>
-              <button className="anime-play mono" type="button" aria-pressed={playing} onClick={() => { const video = system.video.current; if (!video) return; if (playing) video.pause(); else { video.style.display = ''; if (!video.getAttribute('src')) video.src = '/media/anime-eye.mp4'; video.loop = true; void video.play().catch(() => setPlaying(false)); } }}>{playing ? 'PAUSE FILM' : 'PLAY FILM'} <span aria-hidden>{playing ? 'Ⅱ' : '▶'}</span></button>
             </div>
-            <span className="anime-index" aria-hidden>01</span>
+            <AnimeShader progress={system.progress} video={system.video} />
+            <span className="anime-frame-label mono">MOREVNA / A WORLD IN MOTION</span>
+            <span className="anime-camera-note mono" aria-hidden>MOVE TO LOOK AROUND ↗</span>
+            <button className="anime-play mono" type="button" aria-pressed={playing} onClick={() => { const video = system.video.current; if (!video) return; if (playing) video.pause(); else { video.style.display = ''; if (!video.getAttribute('src')) video.src = '/media/anime-eye.mp4'; video.loop = true; void video.play().catch(() => setPlaying(false)); } }}>{playing ? 'PAUSE FILM' : 'PLAY FILM'} <span aria-hidden>{playing ? 'Ⅱ' : '▶'}</span></button>
           </div>
         </div>
         <div className="cover-bottom"><span className="mono">CURRENTLY BUILDING / PROZ0</span><span className="cover-scroll-note mono">SCROLL TO ADVANCE THE FILM ↓</span><button className="visual-credits mono" onClick={() => setCredits(true)}>VISUAL CREDITS <ArrowUpRight size={14} aria-hidden /></button></div>
       </Chapter>
-      <Chapter id="about"><div className="about-layout"><figure className="about-art"><div className="about-art-image"><Image src={animeMarya} alt="Marya Morevna, a cyberpunk character illustration by Anastasia Mayzhegisheva" fill sizes="(max-width: 767px) 80vw, 35vw" /></div><figcaption className="mono">MARYA MOREVNA / ANASTASIA MAYZHEGISHEVA</figcaption></figure>
-        <div className="about-intro"><span className="mono">02 / BEHIND THE INTERFACE</span><h2>A developer.<br />An eye for<br /><span>detail.</span></h2><p>I’m astraa, a fullstack developer in Vietnam. I build components, APIs and data flows — with extra care for expressive UI, thoughtful motion and the details that make an experience feel finished.</p><a className="text-link" href={profile.github} target="_blank" rel="noreferrer"><GithubLogo size={22} aria-hidden /> Behind the work <ArrowUpRight size={20} aria-hidden /></a></div>
-        <div className="about-strip"><span>Make it work.<br />Make it feel right.</span><span className="mono">INTERFACES / MOBILE / BACKEND</span><ArrowUpRight size={34} aria-hidden /></div></div>
-      </Chapter>
+      <Chapter id="about"><About open={setDetail} /></Chapter>
       <Chapter id="stack"><TechnologyUniverse navigate={system.navigate} /></Chapter>
       <Chapter id="projects"><div className="work-heading"><h2>Worlds. Care.<br />Everyday life.</h2><span className="work-number" aria-hidden>003</span></div><ProjectGallery active={system.project} cinematic={system.cinematic} select={system.selectProject} open={setDetail} /></Chapter>
       <Chapter id="journey"><div className="journey-heading"><h2>The work<br />behind it.</h2></div><Journey /></Chapter>
@@ -66,7 +64,7 @@ export function Experience() {
     <Dock active={system.chapter} navigate={system.navigate} /><Cursor />
     <ProjectDetail project={detail === null ? null : projects[detail]} plateIndex={detail ?? 0} close={() => setDetail(null)} onOpen={modalState} />
     <Contact open={contact} close={() => setContact(false)} onOpen={modalState} />
-    <Dialog open={credits} onClose={() => setCredits(false)} titleId="visual-credits-title" onOpen={modalState}><article className="media-credits"><p className="mono accent">VISUAL REFERENCES / OPEN ANIME</p><h2 id="visual-credits-title">Art has authors.</h2><p>Anime imagery gives this portfolio its visual atmosphere. The artwork and animation below are by Morevna Project and its artists.</p><h3>Ruined City (2)</h3><p>Morevna Project · resized and converted to WebP. <a href="https://morevnaproject.org/artwork/ruined-city/" target="_blank" rel="noreferrer">Original artwork ↗</a> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer">CC BY 4.0</a></p><h3>Marya Morevna (cyberpunk-style)</h3><p>Anastasia Mayzhegisheva / Morevna Project · resized and converted to WebP. <a href="https://morevnaproject.org/artwork/marya-morevna-cyberpunk-style/" target="_blank" rel="noreferrer">Original artwork ↗</a> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer">CC BY 4.0</a></p><h3>Morevna Episode 3.0.2</h3><p>Morevna Project · directed by Konstantin Dmitriev. Silent excerpt at 04:58–05:01, resized and re-encoded; matching poster extracted. This media adaptation is available under <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noreferrer">CC BY-SA 4.0</a>. <a href="https://morevnaproject.org/anime/episode-3/" target="_blank" rel="noreferrer">Full film & credits ↗</a> · <a href="/media/anime-eye.mp4" download>Download excerpt ↓</a></p></article></Dialog>
+    <Dialog open={credits} onClose={() => setCredits(false)} titleId="visual-credits-title" onOpen={modalState}><article className="media-credits"><p className="mono accent">VISUAL REFERENCES / OPEN ANIME</p><h2 id="visual-credits-title">Art has authors.</h2><p>Anime imagery gives this portfolio its visual atmosphere. The artwork and animation below are by Morevna Project and its artists.</p><h3>Ruined City (2)</h3><p>Morevna Project · resized and converted to WebP; shader parallax, smoke, fog, lighting and rain added. <a href="https://morevnaproject.org/artwork/ruined-city/" target="_blank" rel="noreferrer">Original artwork ↗</a> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer">CC BY 4.0</a></p><h3>Morevna Episode 3.0.2</h3><p>Morevna Project · directed by Konstantin Dmitriev. Silent excerpt at 04:58–05:01, resized and re-encoded; matching poster extracted. This media adaptation is available under <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noreferrer">CC BY-SA 4.0</a>. <a href="https://morevnaproject.org/anime/episode-3/" target="_blank" rel="noreferrer">Full film & credits ↗</a> · <a href="/media/anime-eye.mp4" download>Download excerpt ↓</a></p></article></Dialog>
     <noscript><p className="noscript-note">JavaScript is needed for interactive controls. All chapters remain available by scrolling.</p></noscript>
   </>;
 }

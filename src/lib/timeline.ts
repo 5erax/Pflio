@@ -8,6 +8,7 @@ export const checkpoints = [
 ] as const;
 export type Checkpoint = typeof checkpoints[number]['id'];
 export const SCROLL_UNITS = 900;
+export const HERO_HOLD = checkpoints[0].end - 100 / SCROLL_UNITS;
 export const motionTokens = { duration: 0.35, ease: [0.16, 1, 0.3, 1] as const, spring: { stiffness: 170, damping: 25 } };
 export const clamp = (value: number, min = 0, max = 1) => Math.min(max, Math.max(min, value));
 export function chapterAt(progress: number): Checkpoint {

@@ -6,19 +6,54 @@ const url = process.env.PREVIEW_URL || 'http://localhost:3000';
 const errors = [];
 try {
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  await page.addInitScript(() => {
+    window.shaderProbe = { draws: 0, reveal: 0, camera: [0, 0] };
+    const names = new WeakMap(), prototype = WebGLRenderingContext.prototype;
+    const locate = prototype.getUniformLocation, scalar = prototype.uniform1f, pair = prototype.uniform2f, draw = prototype.drawArrays;
+    prototype.getUniformLocation = function(program, name) { const location = locate.call(this, program, name); if (location) names.set(location, name); return location; };
+    prototype.uniform1f = function(location, value) { if (names.get(location) === 'uReveal') window.shaderProbe.reveal = value; return scalar.call(this, location, value); };
+    prototype.uniform2f = function(location, x, y) { if (names.get(location) === 'uCamera') window.shaderProbe.camera = [x, y]; return pair.call(this, location, x, y); };
+    prototype.drawArrays = function(...args) { window.shaderProbe.draws++; return draw.apply(this, args); };
+  });
   page.on('pageerror', error => errors.push(error.message));
   await page.goto(url, { waitUntil: 'networkidle' });
   await page.waitForFunction(() => document.querySelector('video').readyState >= 2);
+  await page.waitForFunction(() => document.querySelector('.anime-shader').dataset.state === 'ready' && window.shaderProbe.draws > 0);
+  assert.ok(await page.locator('canvas').evaluate(canvas => canvas.width * canvas.height <= 422000), 'Backbuffer must respect the GPU pixel budget');
+  const box = await page.locator('canvas').boundingBox();
+  await page.mouse.move(box.x + 5, box.y + 5); await page.waitForTimeout(500);
+  const left = await page.evaluate(() => window.shaderProbe.camera[0]);
+  await page.mouse.move(box.x + box.width - 5, box.y + box.height - 5); await page.waitForTimeout(500);
+  assert.ok((await page.evaluate(() => window.shaderProbe.camera[0])) - left > 1.5, 'Pointer must move the actual depth-camera uniform');
+  await page.mouse.move(20, 20);
+  await page.getByRole('button', { name: 'PAUSE ATMOSPHERE' }).click(); await page.mouse.move(20, 20); await page.waitForTimeout(1000);
+  const pausedDraws = await page.evaluate(() => window.shaderProbe.draws); await page.waitForTimeout(300);
+  assert.equal(await page.evaluate(() => window.shaderProbe.draws), pausedDraws, 'Paused atmosphere must stop idle GPU draws');
+  await page.getByRole('button', { name: 'RESUME ATMOSPHERE' }).click();
   const seek = async progress => {
     await page.evaluate(value => scrollTo({ top: value * (document.documentElement.scrollHeight - innerHeight), behavior: 'instant' }), progress);
     await page.waitForTimeout(250);
-    return page.evaluate(() => ({ camera: getComputedStyle(document.querySelector('.anime-film')).transform, time: document.querySelector('video').currentTime, paused: document.querySelector('video').paused }));
+    return page.evaluate(() => ({ reveal: window.shaderProbe.reveal, time: document.querySelector('video').currentTime, paused: document.querySelector('video').paused }));
   };
   const start = await seek(0), first = await seek(0.015), later = await seek(0.03), reverse = await seek(0.015), reset = await seek(0);
-  assert.notEqual(first.camera, start.camera);
-  assert.equal(first.camera, reverse.camera, 'Reverse scrolling must retrace the camera');
+  assert.ok(first.reveal > start.reveal && later.reveal > first.reveal);
+  assert.ok(Math.abs(first.reveal - reverse.reveal) < .005, 'Reverse scrolling must retrace the shader transition');
   assert.ok(later.time > first.time && Math.abs(reset.time - start.time) < 0.1, 'Film must seek in both directions');
   assert.ok([start, first, later, reverse, reset].every(sample => sample.paused));
+  await page.evaluate(() => { window.contextRecovery = document.querySelector('canvas').getContext('webgl').getExtension('WEBGL_lose_context'); window.contextRecovery.loseContext(); });
+  await page.waitForFunction(() => document.querySelector('canvas').dataset.state === 'fallback');
+  assert.ok(await page.locator('.anime-city img').isVisible(), 'Context loss must expose the static art');
+  await page.evaluate(() => window.contextRecovery.restoreContext());
+  await page.waitForFunction(() => document.querySelector('canvas').dataset.state === 'ready');
+  await page.getByRole('button', { name: 'About', exact: true }).click(); await page.waitForTimeout(1400);
+  const idleDraws = await page.evaluate(() => window.shaderProbe.draws); await page.waitForTimeout(300);
+  assert.equal(await page.evaluate(() => window.shaderProbe.draws), idleDraws, 'Offscreen shader must stop drawing');
+  for (const [name, project] of [['Interfaces', 'MediMate AI'], ['Systems', 'FinGenie'], ['Worlds', 'ProZ0']]) {
+    await page.getByRole('button', { name: new RegExp(name) }).click();
+    assert.equal(await page.locator('.folio-reading h3').textContent(), project);
+    await page.getByRole('button', { name: 'Read the project' }).click();
+    assert.equal(await page.locator('#case-study-title').textContent(), project); await page.keyboard.press('Escape');
+  }
   await seek(0.47);
   await page.evaluate(() => {
     window.samples = [];
@@ -45,6 +80,7 @@ try {
   await page.waitForFunction(() => !document.querySelector('main').classList.contains('cinematic'));
   assert.equal(await page.locator('video').getAttribute('src'), null);
   assert.equal(await page.locator('.chapter-seam').first().isVisible(), false);
+  assert.equal(await page.locator('canvas').getAttribute('data-state'), 'fallback');
   const mobile = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
   mobile.on('pageerror', error => errors.push(error.message));
   await mobile.goto(url, { waitUntil: 'networkidle' });
@@ -65,11 +101,17 @@ try {
   await dataSaver.addInitScript(() => Object.defineProperty(navigator, 'connection', { value: { saveData: true } }));
   await dataSaver.goto(url, { waitUntil: 'networkidle' });
   assert.equal(await dataSaver.locator('video').getAttribute('src'), null);
+  assert.equal(await dataSaver.locator('canvas').getAttribute('data-state'), 'fallback');
   const failedMedia = await browser.newPage({ viewport: { width: 1440, height: 900 } });
   await failedMedia.route('**/media/anime-eye.mp4', route => route.abort());
   await failedMedia.goto(url, { waitUntil: 'networkidle' });
   await failedMedia.waitForFunction(() => document.querySelector('video').style.display === 'none');
-  assert.ok(await failedMedia.locator('.world-poster').isVisible(), 'Failed media must keep the poster');
+  assert.ok(await failedMedia.locator('canvas').getAttribute('data-state') === 'ready', 'Failed film must keep the city shader alive');
+  const noGpu = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  await noGpu.addInitScript(() => { const get = HTMLCanvasElement.prototype.getContext; HTMLCanvasElement.prototype.getContext = function(type, ...args) { return type === 'webgl' ? null : get.call(this, type, ...args); }; });
+  await noGpu.goto(url, { waitUntil: 'networkidle' });
+  assert.equal(await noGpu.locator('canvas').getAttribute('data-state'), 'fallback');
+  assert.ok(await noGpu.locator('.world-poster').isVisible(), 'No WebGL must keep real media visible');
   assert.deepEqual(errors, []);
-  console.log('PASS: anime camera and paused video reverse, continuous wheel-driven gallery, project dialog, visual credits, live reduced motion and mobile opt-in video.');
+  console.log('PASS: real WebGL draws, depth camera, reversible shader/film, context recovery, offscreen idle, three folio cases, continuous gallery, reduced motion, mobile playback and GPU/media/data-saver fallbacks.');
 } finally { await browser.close(); }

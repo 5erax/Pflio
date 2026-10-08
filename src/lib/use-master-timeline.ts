@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import type Lenis from 'lenis';
-import { checkpoints, chapterAt, mediaTime, projectAt, SCROLL_UNITS, type Checkpoint } from './timeline';
+import { checkpoints, chapterAt, HERO_HOLD, mediaTime, projectAt, SCROLL_UNITS, type Checkpoint } from './timeline';
 
 export function useMasterTimeline(projectCount: number) {
   const root = useRef<HTMLElement>(null); const video = useRef<HTMLVideoElement>(null);
@@ -20,6 +20,7 @@ export function useMasterTimeline(projectCount: number) {
       root.current?.classList.toggle('cinematic', enhanced); setCinematic(enhanced);
       const element = video.current;
       if (!enhanced) {
+        progress.current = 0;
         if (element) { element.removeAttribute('src'); element.load(); }
         const observer = new IntersectionObserver(entries => {
           for (const entry of entries) {
@@ -50,8 +51,7 @@ export function useMasterTimeline(projectCount: number) {
         if (document.hidden) return;
         lenis.current?.raf(time * 1000);
         if (loadVideo && element && element.readyState >= 2 && Number.isFinite(element.duration) && !element.seeking) {
-          const heldHero = checkpoints[0].end - 1 / SCROLL_UNITS * 100;
-          const target = mediaTime(Math.min(1, progress.current / heldHero), element.duration);
+          const target = mediaTime(Math.min(1, progress.current / HERO_HOLD), element.duration);
           if (Math.abs(element.currentTime - target) > 1 / 60) element.currentTime = target;
         }
       };
@@ -74,10 +74,6 @@ export function useMasterTimeline(projectCount: number) {
           x: () => -(projectCount - 0.5) * slotWidth(),
           duration: workRange.end - workRange.start - 100 / SCROLL_UNITS - 0.03, ease: 'none',
         }, workRange.start + 0.015);
-        const heldHero = checkpoints[0].end - 100 / SCROLL_UNITS;
-        sequence.to('.anime-city img', { scale: 1.02, xPercent: -6, duration: heldHero, ease: 'none' }, 0)
-          .to('.anime-film', { rotation: 0, yPercent: -55, xPercent: 8, scale: 1.06, duration: heldHero, ease: 'none' }, 0)
-          .to('.anime-index', { yPercent: 30, duration: heldHero, ease: 'none' }, 0);
         checkpoints.slice(1).forEach(point => {
           const scene = root.current?.querySelector(`#${point.id} .scene`);
           if (!scene) return;
@@ -87,8 +83,6 @@ export function useMasterTimeline(projectCount: number) {
             duration: 100 / SCROLL_UNITS, ease: 'power2.inOut',
           }, Math.max(0, point.start - 100 / SCROLL_UNITS));
         });
-        sequence.from('.about-art-image img', { yPercent: 12, scale: 1.12, duration: 0.07, ease: 'none' }, 0.08)
-          .from('.about-intro', { y: 36, duration: 0.07, ease: 'none' }, 0.08);
         sequence.from('.contact-mark', { rotation: -30, xPercent: 45, duration: 0.12, ease: 'power2.inOut' }, 0.82)
           .to({}, { duration: 0.04 }, 0.96);
         ScrollTrigger.refresh();
@@ -114,5 +108,5 @@ export function useMasterTimeline(projectCount: number) {
       lenis.current?.scrollTo(position);
     }
   }
-  return { root, video, chapter, project, cinematic, navigate, selectProject, lenis };
+  return { root, video, progress, chapter, project, cinematic, navigate, selectProject, lenis };
 }

@@ -1,3 +1,6 @@
+@import 'tailwindcss';
+@import 'lenis/dist/lenis.css';
+
 :root {
   --background: #050505;
   --foreground: #f2f0ea;
@@ -1590,48 +1593,91 @@ textarea {
   .finance-route { bottom: 28%; }
   .finance-caption { bottom: 17%; font-size: 8px; }
 }
-/* Anime frames: static masks, one scroll-driven camera, no per-frame layout. */
+/* One GPU scene. The DOM media remains a complete fallback. */
 .cover-top,.cover-bottom { display:flex; justify-content:space-between; align-items:center; gap:20px; position:relative; z-index:2; }
 .cover-top { border-bottom:1px solid; padding-bottom:20px; }
 .hero-signature { font:600 32px/.9 var(--font-sans); letter-spacing:-.08em; }
 .hero-signature span { font-size:18px; margin-left:5px; vertical-align:top; }
 .cover-top > .mono { text-align:right; }
-.anime-cover { flex:1; min-height:0; display:grid; grid-template-columns:1.05fr 1fr; position:relative; gap:3%; padding:5dvh 0; }
+.anime-cover { flex:1; min-height:0; display:grid; grid-template-columns:.85fr 1.15fr; position:relative; gap:2%; padding:4dvh 0; }
 .cover-intro { align-self:center; position:relative; z-index:2; }
-.hero-kicker { display:block; margin-bottom:24px; font-size:9px; }
-.cover-intro h1 { font:400 clamp(60px,7.1vw,114px)/.94 var(--font-display),sans-serif; letter-spacing:-.065em; }
+.hero-kicker { display:block; margin-bottom:28px; font-size:9px; }
+.cover-intro h1 { font:400 clamp(52px,6.25vw,106px)/.96 var(--font-display),sans-serif; letter-spacing:-.065em; }
 .cover-intro h1 > span { color:#b83222; }
-.cover-intro p { font-size:clamp(17px,1.5vw,23px); line-height:1.38; letter-spacing:-.025em; margin-top:30px; }
+.cover-intro p { font-size:clamp(16px,1.4vw,22px); line-height:1.5; letter-spacing:-.025em; margin-top:30px; }
 .cover-link { display:flex; align-items:center; justify-content:space-between; width:min(280px,100%); min-height:48px; border-bottom:1px solid; font-size:14px; margin-top:28px; }
 .cover-link svg { transition:transform var(--duration) var(--ease); }
 @media(hover:hover) { .cover-link:hover svg { transform:translateY(4px); } }
-.anime-composition { position:relative; min-height:380px; align-self:stretch; }
-.anime-city { position:absolute; inset:0 0 8% 6%; overflow:hidden; clip-path:polygon(15% 0,100% 0,100% 100%,0 100%); background:#24272d; }
-.anime-city img { object-fit:cover; object-position:62% center; transform:scale(1.14); }
-.anime-frame-label { position:absolute; right:15px; top:15px; color:#fff; background:#101317; padding:6px 8px; font-size:8px; }
-.anime-film { position:absolute; left:-16%; right:8%; bottom:3%; height:40%; min-height:150px; background:#090909; border:6px solid var(--foreground); transform:rotate(-7deg); overflow:hidden; }
+.anime-composition { position:relative; min-height:320px; align-self:stretch; background:#24272d; overflow:hidden; isolation:isolate; }
+.anime-city,.anime-film,.anime-shader { position:absolute; inset:0; width:100%; height:100%; }
+.anime-city img { object-fit:cover; object-position:center; }
+.anime-film { opacity:0; }
+.anime-film:has(video[src]) { opacity:1; }
 .world-poster,.world-video { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
 .world-video { opacity:0; }
 .world-video[data-ready='true'] { opacity:1; }
 .world-video:not([src]) { display:none; }
-.anime-film-corner { position:absolute; right:12px; bottom:10px; font-size:26px; color:#fff; }
-.anime-index { position:absolute; left:2%; top:4%; font:400 clamp(70px,9vw,140px)/1 var(--font-display); color:var(--foreground); -webkit-text-stroke:1px #050505; }
-.anime-play { position:absolute; bottom:10px; left:10px; min-height:44px; padding:0 12px; background:var(--foreground); color:var(--background); display:flex; align-items:center; gap:18px; }
+.anime-shader { opacity:0; pointer-events:none; }
+.anime-shader[data-state='ready'] { opacity:1; }
+.anime-composition:has(.anime-shader[data-state='ready']) .anime-city,
+.anime-composition:has(.anime-shader[data-state='ready']) .anime-film { visibility:hidden; }
+.anime-frame-label { position:absolute; top:18px; left:18px; color:#fff; background:#101317; padding:7px 9px; font-size:8px; }
+.anime-camera-note { position:absolute; right:18px; bottom:18px; color:#fff; background:#101317; padding:7px 9px; font-size:8px; }
+.anime-play { position:absolute; bottom:14px; left:14px; min-height:44px; padding:0 12px; background:var(--foreground); color:var(--background); display:flex; align-items:center; gap:18px; }
 .cinematic .anime-play { display:none; }
+.anime-atmosphere { position:absolute; left:14px; bottom:14px; min-height:44px; background:#101317; color:#fff; font-size:8px; padding:0 12px; display:flex; gap:14px; align-items:center; }
+.anime-composition:has(.anime-shader[data-state='fallback']) .anime-atmosphere { display:none; }
 .cover-bottom { padding-top:12px; border-top:1px solid; min-height:44px; }
 .cover-scroll-note { margin:0; font-size:9px; }
 .visual-credits { display:flex; align-items:center; gap:6px; min-height:44px; font-size:9px; }
-.about-layout { height:100%; display:grid; grid-template-columns:40% 1fr; align-content:center; gap:4dvh 7%; }
-.about-art { margin:0; min-width:0; align-self:stretch; display:flex; flex-direction:column; }
-.about-art-image { flex:1; min-height:300px; position:relative; overflow:hidden; background:#20232d; clip-path:polygon(0 0,100% 7%,100% 100%,0 93%); }
-.about-art-image img { object-fit:cover; object-position:center; }
-.about-art figcaption { font-size:8px; color:#bbbcbf; margin-top:18px; line-height:1.5; }
-.about-intro > .mono { display:block; margin-bottom:22px; color:var(--accent); }
-.about-intro h2 { font-size:clamp(48px,5.5vw,82px); }
-.about-intro h2 span { color:var(--accent); }
-.about-intro p { max-width:460px; font-size:clamp(17px,1.45vw,21px); line-height:1.5; letter-spacing:-.02em; margin:26px 0 18px; }
-.about-strip { grid-column:1/-1; border-top:1px solid var(--border); padding-top:18px; display:flex; align-items:center; justify-content:space-between; gap:20px; }
-.about-strip > span:first-child { font-size:20px; line-height:1.25; letter-spacing:-.035em; }
+/* A personal folio, with actual project art and physical separation between sheets. */
+.profile-layout { height:100%; display:grid; grid-template-columns:.8fr 1.2fr; grid-template-rows:auto 1fr auto; column-gap:8%; row-gap:22px; }
+.profile-top,.profile-bottom { grid-column:1/-1; display:flex; justify-content:space-between; gap:16px; }
+.profile-top { border-bottom:1px solid var(--border); padding-bottom:18px; color:#c3c3bc; font-size:9px; }
+.profile-bio { align-self:center; }
+.profile-bio h2 { font-size:clamp(62px,8.5vw,134px); letter-spacing:-.09em; }
+.profile-bio h2 > span { color:var(--accent); }
+.profile-role { font-size:clamp(23px,2.3vw,34px); line-height:1.12; letter-spacing:-.045em; margin-top:25px; }
+.profile-copy { max-width:380px; font-size:16px; line-height:1.65; color:#c3c3bc; margin:24px 0 18px; }
+.profile-bio .text-link { font-size:13px; }
+.profile-availability { display:block; max-width:270px; color:var(--accent); font-size:9px; margin-top:28px; line-height:1.7; }
+.profile-work { min-width:0; align-self:center; }
+.folio-controls { display:flex; width:100%; border-bottom:1px solid var(--border); }
+.folio-controls button { display:flex; gap:10px; align-items:center; flex:1; min-height:48px; color:#c3c3bc; font-size:13px; position:relative; justify-content:center; }
+.folio-controls button:first-child { justify-content:start; }
+.folio-controls button:last-child { justify-content:end; }
+.folio-controls button[aria-pressed='true'] { color:var(--foreground); }
+.folio-controls button::after { content:''; position:absolute; bottom:-1px; left:0; right:0; height:2px; background:var(--accent); transform:scaleX(0); transition:transform var(--duration) var(--ease); }
+.folio-controls button[aria-pressed='true']::after { transform:scaleX(1); }
+.folio-controls button .mono { font-size:9px; color:var(--accent); }
+.folio-stage { position:relative; height:clamp(220px,32dvh,330px); perspective:1100px; margin:10px 0 0; }
+.folio-sheet { position:absolute; inset:24px 22px 80px 0; display:flex; flex-direction:column; overflow:hidden; background:#e9e6db; color:#111; border:1px solid #555b60; transform:translate3d(calc(var(--rank) * 10px),calc(var(--rank) * 25px),calc(var(--rank) * -55px)) rotateX(27deg) rotateY(-13deg) rotateZ(-6deg); transform-origin:50% 50%; transition:transform .65s var(--ease); backface-visibility:hidden; }
+.folio-title { display:flex; justify-content:space-between; padding:10px 14px; font-size:8px; background:inherit; }
+.folio-art { min-height:0; flex:1; overflow:hidden; position:relative; background:#122432; }
+.folio-project { position:absolute; left:5%; top:50%; transform:translateY(-50%); z-index:1; color:#f2f0ea; font:400 clamp(24px,3.4vw,52px)/1 var(--font-display); letter-spacing:-.07em; }
+.folio-project small { display:block; margin-top:12px; font:8px/1.5 var(--font-mono); letter-spacing:.01em; }
+.folio-illustration { position:absolute; right:0; top:0; width:49%; height:100%; }
+.folio-medimate .folio-project { color:#153d33; }
+.folio-medimate .folio-art { background:#e4f3eb; }
+.folio-proz0 { background:#c8d3d4; }
+.folio-medimate { background:#e2f1e5; }
+.folio-fingenie { background:var(--accent); }
+.folio-finance { display:block; padding:8% 6%; height:100%; background:#f2f0ea; color:#111; font:400 clamp(30px,4.4vw,66px)/1 var(--font-display); letter-spacing:-.07em; }
+.folio-finance > span { color:#b83222; font-family:var(--font-sans); margin-left:8px; }
+.folio-finance small { display:block; margin-top:22px; font:9px var(--font-mono); letter-spacing:.02em; }
+.folio-caption { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 14px; background:inherit; }
+.folio-caption strong { font-size:13px; letter-spacing:-.03em; }
+.folio-caption .mono { font-size:7px; }
+.folio-reading { position:relative; min-height:155px; padding:10px 0 0; animation:folio-reading-in var(--duration) var(--ease) both; }
+.folio-reading > .mono { color:#c3c3bc; font-size:8px; }
+.folio-reading h3 { font-size:30px; line-height:1.05; letter-spacing:-.05em; margin-top:8px; }
+.folio-reading p { font-size:14px; line-height:1.55; margin-top:10px; max-width:500px; color:#c3c3bc; }
+.folio-detail { display:block; font-size:8px; color:#c3c3bc; margin-top:12px; }
+.folio-links { display:flex; justify-content:space-between; margin-top:8px; }
+.folio-links > * { display:flex; align-items:center; gap:10px; font-size:12px; min-height:44px; }
+.folio-links > :first-child { color:var(--accent); }
+.profile-bottom { border-top:1px solid var(--border); padding-top:18px; color:#c3c3bc; font-size:8px; }
+@keyframes folio-reading-in { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
 .chapter-stack .scene { background:var(--foreground); }
 .cinematic .project-slide { padding:0 16px; }
 .media-credits { padding:40px 0 20px; max-width:780px; }
@@ -1641,21 +1687,31 @@ textarea {
 .media-credits a { text-decoration:underline; text-underline-offset:4px; }
 @media(min-width:1024px) and (max-height:760px) {
   .anime-cover { padding:3dvh 0; }
-  .cover-intro h1 { font-size:clamp(60px,7.1vw,104px); }
   .cover-intro p { margin-top:20px; }
-  .anime-composition { min-height:300px; }
-  .hero-kicker { margin-bottom:16px; }
-  .about-art-image { min-height:240px; }
-  .about-intro h2 { font-size:clamp(48px,5vw,70px); }
-  .about-intro p { margin:20px 0 10px; }
+  .hero-kicker { margin-bottom:18px; }
+  .profile-layout { row-gap:12px; column-gap:6%; }
+  .profile-bio h2 { font-size:7.5vw; }
+  .profile-role { margin-top:18px; font-size:26px; }
+  .profile-copy { font-size:14px; margin:18px 0 12px; }
+  .profile-availability { margin-top:18px; }
+  .folio-stage { height:220px; }
+  .folio-sheet { inset:12px 22px 45px 0; transform:translate3d(calc(var(--rank) * 10px),calc(var(--rank) * 17px),calc(var(--rank) * -55px)) rotateX(18deg) rotateY(-10deg) rotateZ(-3deg); }
+  .folio-reading { min-height:0; }
+  .folio-reading h3 { font-size:26px; }
+  .folio-reading p { font-size:13px; }
+  .folio-detail { margin-top:8px; }
 }
 @media(max-width:1023px) {
-  .anime-cover { min-height:560px; padding:50px 0; }
-  .cover-intro h1 { font-size:clamp(70px,9vw,110px); }
+  .anime-cover { min-height:540px; padding:40px 0; }
+  .cover-intro h1 { font-size:clamp(52px,7vw,84px); }
   .anime-composition { min-height:350px; }
-  .about-layout { min-height:72dvh; height:auto; }
-  .about-intro h2 { font-size:6vw; }
   .cover-scroll-note { display:none; }
+  .profile-layout { min-height:72dvh; height:auto; column-gap:5%; }
+  .profile-role { font-size:24px; }
+  .folio-controls button { gap:6px; font-size:11px; }
+  .folio-controls button svg { display:none; }
+  .folio-stage { height:240px; }
+  .folio-caption .mono { display:none; }
 }
 @media(max-width:767px) {
   .chapter-hero .scene { padding-top:24px; }
@@ -1665,25 +1721,32 @@ textarea {
   .anime-cover { display:flex; flex-direction:column; gap:28px; padding:34px 0 22px; min-height:0; }
   .cover-intro { align-self:start; width:100%; }
   .hero-kicker { font-size:8px; margin-bottom:18px; }
-  .cover-intro h1 { font-size:clamp(42px,13.3vw,102px); }
+  .cover-intro h1 { font-size:clamp(42px,11.8vw,90px); }
   .cover-intro p { font-size:17px; margin-top:20px; }
   .cover-link { margin-top:18px; width:100%; }
-  .anime-composition { min-height:320px; width:100%; }
-  .anime-city { inset:0 0 10% 8%; }
-  .anime-film { left:0; right:4%; bottom:4%; height:45%; min-height:120px; border-width:4px; transform:rotate(-5deg); }
-  .anime-index { font-size:74px; top:8%; }
-  .anime-frame-label { right:8px; font-size:7px; }
+  .anime-composition { min-height:340px; width:100%; }
+  .anime-atmosphere { top:42px; bottom:auto; left:12px; }
+  .anime-frame-label { top:12px; left:12px; font-size:7px; }
+  .anime-camera-note { display:none; }
   .cover-bottom { gap:12px; }
   .cover-bottom > .mono { font-size:8px; }
-  .about-layout { display:flex; flex-direction:column; gap:36px; min-height:0; }
-  .about-art { width:82%; }
-  .about-art-image { flex:auto; min-height:0; height:380px; }
-  .about-art figcaption { font-size:7px; }
-  .about-intro h2 { font-size:13.5vw; }
-  .about-intro p { font-size:18px; margin-top:24px; }
-  .about-strip { width:100%; padding-top:20px; gap:12px; }
-  .about-strip > span:first-child { font-size:18px; }
-  .about-strip > .mono { max-width:110px; font-size:9px; }
-  .about-strip svg { display:none; }
+  .profile-layout { display:flex; flex-direction:column; gap:30px; min-height:0; }
+  .profile-top { font-size:7px; }
+  .profile-bio { align-self:stretch; }
+  .profile-bio h2 { font-size:25vw; }
+  .profile-role { font-size:27px; margin-top:22px; }
+  .profile-copy { font-size:16px; margin-top:22px; }
+  .profile-availability { max-width:100%; font-size:8px; margin-top:20px; }
+  .folio-controls button { font-size:12px; gap:7px; }
+  .folio-stage { height:260px; }
+  .folio-sheet { right:15px; bottom:80px; }
+  .folio-finance { font-size:40px; }
+  .folio-project { font-size:29px; }
+  .folio-project small { max-width:120px; font-size:6px; margin-top:8px; }
+  .folio-reading { min-height:0; margin-top:10px; }
+  .folio-reading p { font-size:15px; }
+  .folio-detail { line-height:1.8; }
+  .profile-bottom { font-size:7px; gap:16px; line-height:1.8; }
 }
-@media(prefers-reduced-motion:reduce) { .anime-play { display:none; } }
+@media(prefers-reduced-motion:reduce) { .anime-play,.anime-camera-note { display:none; } .folio-sheet { transition:none; } .folio-reading { animation:none; } }
+@media(hover:none) { .anime-camera-note { display:none; } }
