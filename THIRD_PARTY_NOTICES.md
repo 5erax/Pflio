@@ -4,6 +4,8 @@ This is astraa’s personal portfolio application, not a component library, temp
 
 Source inspected and adapted on 2026-10-08:
 
+The ProZ0 and MediMate project covers are Astraa's original profile artwork, reused at the owner's request from [proz0-cover.svg](https://github.com/5erax/5erax/blob/main/assets/proz0-cover.svg) and [medimate-cover.svg](https://github.com/5erax/5erax/blob/main/assets/medimate-cover.svg). Ambient animation declarations are disabled so the portfolio controls motion and reduced-motion behavior. The open-A geometry, cut lettering, chapter shutters, and FinGenie typographic illustration were authored for this portfolio.
+
 | Application component | Original source | Adaptation retained |
 | --- | --- | --- |
 | Chapter rail | [VengeanceUI GlassDock](https://raw.githubusercontent.com/Ashutoshx7/VengeanceUI/main/public/r/glass-dock.json) | Shared spring tooltip, directional text presence, hover lift; native buttons and Phosphor replace custom icon machinery |

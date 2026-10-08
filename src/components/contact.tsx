@@ -32,7 +32,7 @@ export function Contact({ open, close, onOpen }: { open: boolean; close: () => v
         <div className="honeypot" aria-hidden><label>Website<input name="website" tabIndex={-1} autoComplete="off" /></label></div>
         <button className="primary-button" disabled={state === 'loading'} type="submit">{state === 'loading' ? 'Sending...' : 'Send message'} <ArrowUpRight size={20} aria-hidden /></button>
         {message && <div className="form-feedback" role="alert"><p>{message}</p>{state === 'error' && <div className="draft-actions"><button type="button" className="text-link" onClick={async () => { try { await navigator.clipboard.writeText(draft); setMessage('Draft copied. Your message has not been sent.'); } catch { setMessage('Copy unavailable. Use Save draft to keep your message.'); } }}><Copy size={17} aria-hidden /> Copy draft</button><button type="button" className="text-link" onClick={download}><DownloadSimple size={17} aria-hidden /> Save draft</button></div>}</div>}
-        <p className="form-note">Your message is only marked sent after delivery is confirmed.</p>
+        <p className="form-note">You can also <a className="text-link" href={`mailto:${profile.email}`}>email me directly ↗</a>. Your message is only marked sent after delivery is confirmed.</p>
       </form>}
     </div>
   </Dialog>;

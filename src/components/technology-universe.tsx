@@ -1,7 +1,8 @@
 'use client';
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { useReducedMotion } from '@/lib/use-reduced-motion';
-import { ArrowUpRight, Asterisk } from '@phosphor-icons/react';
+import { ArrowUpRight } from '@phosphor-icons/react';
+import { IdentityMark } from './identity-mark';
 import { profile, projects, technologies } from '@/data/portfolio';
 import type { Checkpoint } from '@/lib/timeline';
 
@@ -19,7 +20,7 @@ export function TechnologyUniverse({ navigate }: { navigate: (id: Checkpoint) =>
   const reduced = useReducedMotion();
   const technology = technologies[selected];
   const selectedLogo = brandLogos[technology.name];
-  const usedProject = projects.find((project) => technology.projects.includes(project.slug));
+  const usedProject = projects.find((project) => technology.projects.includes(project.slug)) ?? { name: 'This portfolio', repositoryUrl: 'https://github.com/5erax/Pflio' };
 
   useEffect(() => {
     const element = field.current;
@@ -60,7 +61,7 @@ export function TechnologyUniverse({ navigate }: { navigate: (id: Checkpoint) =>
             </div>;
           }))}
         </div>
-        <div className="orbit-core" aria-hidden="true"><Asterisk size={78} weight="bold" /><span>{profile.name}</span></div>
+        <div className="orbit-core" aria-hidden="true"><IdentityMark /><span>{profile.name}</span></div>
         <span className="orbit-caption mono">SELECT A TOOL</span>
       </div>
 
@@ -91,7 +92,7 @@ export function TechnologyUniverse({ navigate }: { navigate: (id: Checkpoint) =>
       </div>
 
       {usedProject && <div className="toolkit-project">
-        <span className="mono">USED IN THIS BUILD</span>
+        <span className="mono">EXPLORE THE SOURCE</span>
         <button type="button" className="toolkit-project-link" onClick={() => navigate('projects')}><span>{usedProject.name}</span><ArrowUpRight size={23} aria-hidden="true" /></button>
         {usedProject.repositoryUrl && <a className="toolkit-source-link mono" href={usedProject.repositoryUrl} target="_blank" rel="noreferrer">View source<ArrowUpRight size={15} aria-hidden="true" /></a>}
       </div>}

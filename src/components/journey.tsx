@@ -17,8 +17,8 @@ export function Journey() {
 
   return <div className="journey-layout field-notes">
     <div className="file-system field-index">
-      <span className="field-label mono">FIELD NOTES / 2026</span>
-      <p className="field-index-copy">A few files.<br />An unwritten future.</p>
+      <span className="field-label mono">2020 — PRESENT</span>
+      <p className="field-index-copy">From foundations<br />to fullstack.</p>
       <ol className="field-file-list" aria-label="Field note index">
         {journey.map((entry, index) => <li key={entry.id}>
           <button type="button" className={`file-row ${selected === index ? 'selected' : ''}`}
@@ -40,9 +40,9 @@ export function Journey() {
         <footer className="field-note-footer mono"><span>{note.date}</span><span>{note.file}</span></footer>
       </article>
 
-      <aside className="journey-tabs field-background" aria-label="Learning context">
+      <aside className="journey-tabs field-background" aria-label="Professional background">
         <div className="field-context-bar">
-          <span className="field-label mono">IN THE MAKING</span>
+          <span className="field-label mono">BACKGROUND</span>
           <div role="tablist" aria-label="Background" className="tab-list">
             {panels.map((panel, index) => <button key={panel.id} type="button"
               ref={element => { tabs.current[index] = element; }}
