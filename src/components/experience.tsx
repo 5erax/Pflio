@@ -1,6 +1,8 @@
 'use client';
 import Image from 'next/image';
-import studyPoster from '../../public/media/study-poster.webp';
+import animeCity from '../../public/media/anime-city.webp';
+import animeMarya from '../../public/media/anime-marya.webp';
+import animeEye from '../../public/media/anime-eye.webp';
 import { useCallback, useState, type CSSProperties } from 'react';
 import { ArrowDown, ArrowUp, ArrowUpRight, GithubLogo } from '@phosphor-icons/react';
 import { profile, projects } from '@/data/portfolio';
@@ -12,43 +14,49 @@ import { IdentityMark } from './identity-mark';
 import { Journey } from './journey';
 import { Contact } from './contact';
 import { TechnologyUniverse } from './technology-universe';
+import { Dialog } from './ui/dialog';
 
 function Chapter({ id, children, className = '' }: { id: Checkpoint; children: React.ReactNode; className?: string }) {
   const range = checkpoints.find(point => point.id === id)!;
   return <section id={id} data-chapter className={`chapter chapter-${id} ${className}`} style={{ '--chapter-height': `${(range.end - range.start) * SCROLL_UNITS + (id === 'contact' ? 100 : 0)}dvh` } as CSSProperties}>
-    <div className="scene">{children}{id !== 'hero' && <div className="chapter-seam" aria-hidden>{Array.from({ length: 6 }, (_, index) => <span key={index} />)}</div>}</div>
+    <div className="scene">{children}{id !== 'hero' && <div className="chapter-seam" aria-hidden><span /><span /></div>}</div>
   </section>;
 }
 
 export function Experience() {
   const system = useMasterTimeline(projects.length);
   const [detail, setDetail] = useState<number | null>(null); const [contact, setContact] = useState(false);
-  const [unfolded, setUnfolded] = useState(false);
+  const [credits, setCredits] = useState(false); const [playing, setPlaying] = useState(false);
   const modalState = useCallback((open: boolean) => { if (open) system.lenis.current?.stop(); else system.lenis.current?.start(); }, [system.lenis]);
   return <>
     <a className="skip-link" href="#about">Skip to content</a>
     <a className="rail-brand" href="#hero" onClick={event => { event.preventDefault(); system.navigate('hero'); }} aria-label="astraa, back to start">a<span aria-hidden>↗</span></a>
     <span className="rail-edition mono" aria-hidden>ASTRAA / {profile.year}</span>
     <main ref={system.root} className={system.cinematic ? 'experience cinematic' : 'experience'}>
-      <Chapter id="hero"><div className="cover-top hero-meta"><span className="mono">FULLSTACK DEVELOPER / VIETNAM</span><span className="mono">{profile.year}</span></div>
-        <h1 className="cover-name" aria-label="astraa"><span className="hero-word" aria-hidden>astraa<span className="cover-period">.</span></span>
-          <span className="name-layers" aria-hidden>{Array.from({ length: 5 }, (_, index) => <span key={index} className="name-band" style={{ clipPath: `inset(${Math.max(0, index * 20 - 0.3)}% 0 ${Math.max(0, 100 - (index + 1) * 20 - 0.3)}% 0)` }}>astraa<span className="cover-period">.</span></span>)}</span>
-        </h1>
-        <div className="cover-lower"><div className="cover-intro hero-meta"><p>Fullstack developer.<br />An eye for the interface.</p><button className="cover-link" onClick={() => system.navigate('projects')}>Explore selected work <ArrowDown size={23} aria-hidden /></button><span className="cover-scroll-note mono">SCROLL TO PULL THE LAYERS APART ↓</span></div>
-          <div className="study-aperture">
-            <Image src={studyPoster} alt="" fill priority sizes="(max-width: 767px) 68vw, 35vw" className="world-poster" />
-            <video ref={system.video} className="world-video" muted playsInline preload="metadata" poster={studyPoster.src} disablePictureInPicture aria-hidden onError={event => { event.currentTarget.style.display = 'none'; }} />
-            <button type="button" className="study-unfold" aria-label={unfolded ? 'Tap to reassemble the astraa mark' : 'Tap to unfold the astraa mark'} aria-pressed={unfolded} data-unfolded={unfolded} onClick={() => setUnfolded(!unfolded)}><IdentityMark /><span className="mono">{unfolded ? 'TAP TO REASSEMBLE' : 'TAP TO UNFOLD'}</span></button>
+      <Chapter id="hero">
+        <div className="cover-top"><a className="hero-signature" href={profile.github} target="_blank" rel="noreferrer">astraa<span>↗</span></a><span className="mono">FULLSTACK DEVELOPER<br />VIETNAM / {profile.year}</span></div>
+        <div className="anime-cover">
+          <div className="cover-intro"><span className="mono hero-kicker">INDEPENDENT MIND. CONNECTED SYSTEMS.</span><h1>Code, with<br />a <span>pulse.</span></h1><p>Expressive interfaces.<br />Thoughtful motion.<br />Built all the way through.</p><button className="cover-link" onClick={() => system.navigate('projects')}>Explore selected work <ArrowDown size={23} aria-hidden /></button></div>
+          <div className="anime-composition" aria-label="Anime visual study featuring Morevna">
+            <div className="anime-city"><Image src={animeCity} alt="A ruined cyberpunk city from the Morevna anime" fill preload sizes="(max-width: 767px) 100vw, 55vw" /></div>
+            <span className="anime-frame-label mono">MOREVNA / A WORLD IN MOTION</span>
+            <div className="anime-film">
+              <Image src={animeEye} alt="" fill preload sizes="(max-width: 767px) 85vw, 40vw" className="world-poster" />
+              <video ref={system.video} className="world-video" muted playsInline preload="none" poster={animeEye.src} disablePictureInPicture aria-hidden onLoadedData={event => { event.currentTarget.dataset.ready = 'true'; }} onPause={() => setPlaying(false)} onPlay={() => setPlaying(true)} onError={event => { event.currentTarget.style.display = 'none'; setPlaying(false); }} />
+              <span className="anime-film-corner" aria-hidden>↗</span>
+              <button className="anime-play mono" type="button" aria-pressed={playing} onClick={() => { const video = system.video.current; if (!video) return; if (playing) video.pause(); else { video.style.display = ''; if (!video.getAttribute('src')) video.src = '/media/anime-eye.mp4'; video.loop = true; void video.play().catch(() => setPlaying(false)); } }}>{playing ? 'PAUSE FILM' : 'PLAY FILM'} <span aria-hidden>{playing ? 'Ⅱ' : '▶'}</span></button>
+            </div>
+            <span className="anime-index" aria-hidden>01</span>
           </div>
         </div>
-        <div className="cover-bottom hero-meta"><span className="mono">CURRENT FOCUS / PROZ0</span><span className="mono">FRONTEND & FULLSTACK OPPORTUNITIES</span></div>
+        <div className="cover-bottom"><span className="mono">CURRENTLY BUILDING / PROZ0</span><span className="cover-scroll-note mono">SCROLL TO ADVANCE THE FILM ↓</span><button className="visual-credits mono" onClick={() => setCredits(true)}>VISUAL CREDITS <ArrowUpRight size={14} aria-hidden /></button></div>
       </Chapter>
-      <Chapter id="about"><div className="about-layout"><div className="about-origin"><IdentityMark className="origin-mark" /><span className="mono">BEHIND THE INTERFACE</span></div>
-        <div className="about-intro"><h2>A focus on<br />what you<br /><span>feel.</span></h2><p>I’m astraa, a fullstack developer in Vietnam. I build components, APIs and data flows — with extra care for expressive UI, thoughtful motion and the details that make an experience feel finished.</p><a className="text-link" href={profile.github} target="_blank" rel="noreferrer"><GithubLogo size={22} aria-hidden /> Behind the work <ArrowUpRight size={20} aria-hidden /></a></div>
+      <Chapter id="about"><div className="about-layout"><figure className="about-art"><div className="about-art-image"><Image src={animeMarya} alt="Marya Morevna, a cyberpunk character illustration by Anastasia Mayzhegisheva" fill sizes="(max-width: 767px) 80vw, 35vw" /></div><figcaption className="mono">MARYA MOREVNA / ANASTASIA MAYZHEGISHEVA</figcaption></figure>
+        <div className="about-intro"><span className="mono">02 / BEHIND THE INTERFACE</span><h2>A developer.<br />An eye for<br /><span>detail.</span></h2><p>I’m astraa, a fullstack developer in Vietnam. I build components, APIs and data flows — with extra care for expressive UI, thoughtful motion and the details that make an experience feel finished.</p><a className="text-link" href={profile.github} target="_blank" rel="noreferrer"><GithubLogo size={22} aria-hidden /> Behind the work <ArrowUpRight size={20} aria-hidden /></a></div>
         <div className="about-strip"><span>Make it work.<br />Make it feel right.</span><span className="mono">INTERFACES / MOBILE / BACKEND</span><ArrowUpRight size={34} aria-hidden /></div></div>
       </Chapter>
       <Chapter id="stack"><TechnologyUniverse navigate={system.navigate} /></Chapter>
-      <Chapter id="projects"><div className="work-heading"><h2>Worlds. Care.<br />Everyday life.</h2><span className="work-number" aria-hidden>003</span></div><ProjectGallery active={system.project} select={system.selectProject} open={setDetail} /></Chapter>
+      <Chapter id="projects"><div className="work-heading"><h2>Worlds. Care.<br />Everyday life.</h2><span className="work-number" aria-hidden>003</span></div><ProjectGallery active={system.project} cinematic={system.cinematic} select={system.selectProject} open={setDetail} /></Chapter>
       <Chapter id="journey"><div className="journey-heading"><h2>The work<br />behind it.</h2></div><Journey /></Chapter>
       <Chapter id="contact"><div className="contact-scene"><h2>Have a project<br />in mind?</h2><div className="contact-lower"><MagneticButton className="conversation-button" onClick={() => setContact(true)}><span>Start a conversation</span><ArrowUpRight size={44} aria-hidden /></MagneticButton><div className="contact-links"><a className="text-link contact-email" href={`mailto:${profile.email}`}>{profile.email}<ArrowUpRight size={20} aria-hidden /></a><a className="text-link" href={profile.linkedin} target="_blank" rel="noreferrer">LinkedIn<ArrowUpRight size={20} aria-hidden /></a><a className="contact-github text-link" href={profile.github} target="_blank" rel="noreferrer"><GithubLogo size={22} aria-hidden /> GitHub<ArrowUpRight size={20} aria-hidden /></a></div></div></div>
         <div className="contact-mark" aria-hidden><IdentityMark /></div>
@@ -58,6 +66,7 @@ export function Experience() {
     <Dock active={system.chapter} navigate={system.navigate} /><Cursor />
     <ProjectDetail project={detail === null ? null : projects[detail]} plateIndex={detail ?? 0} close={() => setDetail(null)} onOpen={modalState} />
     <Contact open={contact} close={() => setContact(false)} onOpen={modalState} />
+    <Dialog open={credits} onClose={() => setCredits(false)} titleId="visual-credits-title" onOpen={modalState}><article className="media-credits"><p className="mono accent">VISUAL REFERENCES / OPEN ANIME</p><h2 id="visual-credits-title">Art has authors.</h2><p>Anime imagery gives this portfolio its visual atmosphere. The artwork and animation below are by Morevna Project and its artists.</p><h3>Ruined City (2)</h3><p>Morevna Project · resized and converted to WebP. <a href="https://morevnaproject.org/artwork/ruined-city/" target="_blank" rel="noreferrer">Original artwork ↗</a> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer">CC BY 4.0</a></p><h3>Marya Morevna (cyberpunk-style)</h3><p>Anastasia Mayzhegisheva / Morevna Project · resized and converted to WebP. <a href="https://morevnaproject.org/artwork/marya-morevna-cyberpunk-style/" target="_blank" rel="noreferrer">Original artwork ↗</a> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer">CC BY 4.0</a></p><h3>Morevna Episode 3.0.2</h3><p>Morevna Project · directed by Konstantin Dmitriev. Silent excerpt at 04:58–05:01, resized and re-encoded; matching poster extracted. This media adaptation is available under <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noreferrer">CC BY-SA 4.0</a>. <a href="https://morevnaproject.org/anime/episode-3/" target="_blank" rel="noreferrer">Full film & credits ↗</a> · <a href="/media/anime-eye.mp4" download>Download excerpt ↓</a></p></article></Dialog>
     <noscript><p className="noscript-note">JavaScript is needed for interactive controls. All chapters remain available by scrolling.</p></noscript>
   </>;
 }

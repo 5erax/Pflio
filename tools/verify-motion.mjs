@@ -1,68 +1,75 @@
-// Optional browser QA: install Playwright separately or supply its module URL.
+// Optional browser QA: npm install --no-save playwright, or set PLAYWRIGHT_PATH.
 import assert from 'node:assert/strict';
 const { chromium } = await import(process.env.PLAYWRIGHT_PATH || 'playwright');
 const browser = await chromium.launch({ headless: true });
+const url = process.env.PREVIEW_URL || 'http://localhost:3000';
+const errors = [];
 try {
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
-  const errors = [];
   page.on('pageerror', error => errors.push(error.message));
-  await page.goto(process.env.PREVIEW_URL || 'http://localhost:3000', { waitUntil: 'networkidle' });
+  await page.goto(url, { waitUntil: 'networkidle' });
   await page.waitForFunction(() => document.querySelector('video').readyState >= 2);
-  const posterCenter = await page.locator('.world-poster').evaluate(async image => {
-    await image.decode();
-    const canvas = document.createElement('canvas');
-    canvas.width = image.naturalWidth; canvas.height = image.naturalHeight;
-    const context = canvas.getContext('2d');
-    context.drawImage(image, 0, 0);
-    return [...context.getImageData(canvas.width / 2, canvas.height / 2, 1, 1).data];
-  });
-  assert.ok(posterCenter[0] > 150 && posterCenter[1] > 200 && posterCenter[2] < 90, 'The open A must replace the old filled-center asterisk, including cached fallback art');
   const seek = async progress => {
     await page.evaluate(value => scrollTo({ top: value * (document.documentElement.scrollHeight - innerHeight), behavior: 'instant' }), progress);
-    await page.waitForTimeout(1100);
-    return page.evaluate(() => ({
-      bands: [...document.querySelectorAll('.name-band')].map(el => new DOMMatrix(getComputedStyle(el).transform).m41),
-      time: document.querySelector('video').currentTime,
-      paused: document.querySelector('video').paused,
-    }));
+    await page.waitForTimeout(250);
+    return page.evaluate(() => ({ camera: getComputedStyle(document.querySelector('.anime-film')).transform, time: document.querySelector('video').currentTime, paused: document.querySelector('video').paused }));
   };
-  const start = await seek(0);
-  const split = await seek(0.017);
-  const aligned = await seek(0.036);
-  const reversed = await seek(0.017);
-  const reset = await seek(0);
-  assert.ok(split.bands.some(x => Math.abs(x) > 80), 'Lettering must visibly separate');
-  assert.ok(aligned.bands.every(x => Math.abs(x) < 1), 'Lettering must reassemble before the hero unpins');
-  split.bands.forEach((x, index) => assert.ok(Math.abs(x - reversed.bands[index]) < 1, 'Reverse scroll must retrace each cut'));
-  assert.ok(split.time > start.time + 1 && Math.abs(reset.time - start.time) < 0.1, 'Video must seek forward and back');
-  assert.ok([start, split, aligned, reversed, reset].every(sample => sample.paused), 'The video must never autoplay');
-  await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.waitForFunction(() => !document.querySelector('main').classList.contains('cinematic'));
-  assert.equal(await page.locator('video').getAttribute('src'), null);
-  assert.ok((await seek(0)).bands.every(x => x === 0), 'Mode changes must remove timeline transforms');
-  assert.equal(await page.locator('.chapter-seam').first().isVisible(), false);
-  await page.emulateMedia({ reducedMotion: 'no-preference' });
-  await page.waitForFunction(() => document.querySelector('main').classList.contains('cinematic'));
+  const start = await seek(0), first = await seek(0.015), later = await seek(0.03), reverse = await seek(0.015), reset = await seek(0);
+  assert.notEqual(first.camera, start.camera);
+  assert.equal(first.camera, reverse.camera, 'Reverse scrolling must retrace the camera');
+  assert.ok(later.time > first.time && Math.abs(reset.time - start.time) < 0.1, 'Film must seek in both directions');
+  assert.ok([start, first, later, reverse, reset].every(sample => sample.paused));
+  await seek(0.47);
+  await page.evaluate(() => {
+    window.samples = [];
+    const sample = () => { window.samples.push({ y: scrollY, x: new DOMMatrix(getComputedStyle(document.querySelector('.perspective-track')).transform).m41 }); window.frame = requestAnimationFrame(sample); };
+    window.frame = requestAnimationFrame(sample);
+  });
+  for (let i = 0; i < 28; i++) { await page.mouse.wheel(0, 35); await page.waitForTimeout(30); }
+  const samples = await page.evaluate(() => { cancelAnimationFrame(window.frame); return window.samples; });
+  const moving = samples.slice(1).map((sample, index) => ({ dy: sample.y - samples[index].y, dx: sample.x - samples[index].x })).filter(sample => sample.dy > 1);
+  assert.ok(moving.length > 20, 'Continuous wheel input must produce intermediate positions');
+  assert.ok(moving.every(sample => sample.dx < -0.01), 'Gallery must move with scrolling instead of holding and jumping');
   await page.getByRole('button', { name: 'Work', exact: true }).click();
-  await page.waitForTimeout(1600);
-  await page.locator('.work-gallery').focus();
-  await page.keyboard.press('End');
-  await page.waitForTimeout(1600);
+  await page.waitForTimeout(1000);
+  await page.locator('.work-gallery').focus(); await page.keyboard.press('End'); await page.waitForTimeout(1000);
   assert.equal(await page.locator('.project-caption h3').textContent(), 'FinGenie');
   await page.getByRole('button', { name: 'Open project', exact: true }).click();
   assert.equal(await page.locator('#case-study-title').textContent(), 'FinGenie');
   await page.keyboard.press('Escape');
-  assert.equal(await page.locator('dialog[open]').count(), 0);
+  await seek(0);
+  await page.getByRole('button', { name: 'VISUAL CREDITS', exact: true }).click();
+  assert.ok(await page.getByRole('heading', { name: 'Art has authors.' }).isVisible());
+  await page.keyboard.press('Escape');
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.waitForFunction(() => !document.querySelector('main').classList.contains('cinematic'));
+  assert.equal(await page.locator('video').getAttribute('src'), null);
+  assert.equal(await page.locator('.chapter-seam').first().isVisible(), false);
   const mobile = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
-  await mobile.goto(process.env.PREVIEW_URL || 'http://localhost:3000', { waitUntil: 'networkidle' });
-  assert.equal(await mobile.locator('video').getAttribute('src'), null);
-  const toggle = mobile.getByRole('button', { name: /Tap to (unfold|reassemble) the astraa mark/ });
-  await toggle.tap();
-  assert.equal(await toggle.getAttribute('aria-pressed'), 'true');
-  await toggle.tap();
-  assert.equal(await toggle.getAttribute('aria-pressed'), 'false');
+  mobile.on('pageerror', error => errors.push(error.message));
+  await mobile.goto(url, { waitUntil: 'networkidle' });
+  assert.equal(await mobile.locator('video').getAttribute('src'), null, 'Mobile must not download video automatically');
+  await mobile.getByRole('button', { name: /PLAY FILM/ }).tap();
+  await mobile.waitForFunction(() => !document.querySelector('video').paused);
+  await mobile.getByRole('button', { name: /PAUSE FILM/ }).tap();
+  assert.equal(await mobile.locator('video').evaluate(video => video.paused), true);
+  await mobile.getByRole('button', { name: /PLAY FILM/ }).tap();
+  await mobile.getByRole('button', { name: 'About', exact: true }).tap();
+  await mobile.waitForTimeout(1000);
+  assert.equal(await mobile.locator('video').evaluate(video => video.paused), true, 'Leaving the hero must pause mobile film');
   await mobile.emulateMedia({ reducedMotion: 'reduce' });
-  assert.equal(await toggle.isVisible(), false);
+  await mobile.waitForTimeout(200);
+  assert.equal(await mobile.locator('video').getAttribute('src'), null);
+  assert.equal(await mobile.locator('.anime-play').isVisible(), false);
+  const dataSaver = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  await dataSaver.addInitScript(() => Object.defineProperty(navigator, 'connection', { value: { saveData: true } }));
+  await dataSaver.goto(url, { waitUntil: 'networkidle' });
+  assert.equal(await dataSaver.locator('video').getAttribute('src'), null);
+  const failedMedia = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  await failedMedia.route('**/media/anime-eye.mp4', route => route.abort());
+  await failedMedia.goto(url, { waitUntil: 'networkidle' });
+  await failedMedia.waitForFunction(() => document.querySelector('video').style.display === 'none');
+  assert.ok(await failedMedia.locator('.world-poster').isVisible(), 'Failed media must keep the poster');
   assert.deepEqual(errors, []);
-  console.log('PASS: cut lettering, reassembly, reverse seek, live motion preference, real projects, native dialogs and mobile unfold.');
+  console.log('PASS: anime camera and paused video reverse, continuous wheel-driven gallery, project dialog, visual credits, live reduced motion and mobile opt-in video.');
 } finally { await browser.close(); }

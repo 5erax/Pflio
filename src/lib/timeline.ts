@@ -14,11 +14,12 @@ export function chapterAt(progress: number): Checkpoint {
   return (checkpoints.find(point => clamp(progress) < point.end) ?? checkpoints.at(-1)!).id;
 }
 export function projectAt(progress: number, count: number) {
-  const range = checkpoints.find(point => point.id === 'projects')!;
-  return Math.min(count - 1, Math.floor(clamp((progress - range.start) / (range.end - range.start)) * count));
+  return Math.round(projectPosition(progress, count));
 }
-export function smoothProgress(current: number, target: number, delta: number) {
-  return current + (clamp(target) - current) * (1 - Math.exp(-Math.min(delta, 0.1) * 12));
+export function projectPosition(progress: number, count: number) {
+  const range = checkpoints.find(point => point.id === 'projects')!;
+  // Finish travelling before the sticky scene leaves the viewport.
+  return clamp((progress - range.start - 0.015) / (range.end - range.start - 100 / SCROLL_UNITS - 0.03)) * Math.max(0, count - 1);
 }
 export function mediaTime(progress: number, duration: number) {
   return clamp(progress) * Math.max(0, duration - 1 / 30);

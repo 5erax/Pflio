@@ -1,14 +1,12 @@
-@import 'tailwindcss' ;
 :root {
   --background: #050505;
   --foreground: #f2f0ea;
-  --accent: #c6ff33;
+  --accent: #ff6b42;
   --muted: #a4a49d;
   --border: rgb(242 240 234 / .24);
   --gutter: clamp(28px,4.5vw,72px);
   --duration: .35s;
   --ease: cubic-bezier(.16,1,.3,1);
-  --master-progress: 0;
   color-scheme: dark;
 }
 @theme inline {
@@ -148,43 +146,6 @@ h2 {
   display: flex;
   flex-direction: column;
 }
-.cover-top,.cover-bottom {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 20px;
-}
-.cover-top {
-  padding-bottom: 18px;
-  border-bottom: 1px solid var(--background);
-}
-.cover-name {
-  font: 400 clamp(7rem,22.4vw,24rem)/.89 var(--font-display),sans-serif;
-  letter-spacing: -.08em;
-  margin: 3dvh 0 0;
-  padding-right: .03em;
-  position: relative;
-  perspective: 900px;
-}
-.hero-word {
-  display: inline-block;
-  visibility: hidden;
-}
-.name-layers,.name-band {
-  display: block;
-  position: absolute;
-  inset: 0;
-  white-space: nowrap;
-  pointer-events: none;
-}
-.name-band {
-  transform-origin: 50% 50%;
-  backface-visibility: hidden;
-}
-.cover-scroll-note {
-  display: block;
-  margin-top: 28px;
-}
 .chapter-seam {
   display: none;
   position: absolute;
@@ -196,117 +157,18 @@ h2 {
   display: flex;
 }
 .chapter-seam > span {
-  width: calc(100% / 6 + 1px);
+  width: 65%;
   flex-shrink: 0;
   height: 100%;
   background: var(--background);
+  transform: skewX(-12deg);
+  margin-left: -8%;
 }
 .chapter-about .chapter-seam > span,.chapter-contact .chapter-seam > span {
   background: var(--foreground);
 }
 .chapter-projects .chapter-seam > span {
   background: var(--accent);
-}
-.origin-mark {
-  width: 100%;
-  max-width: 390px;
-  color: var(--accent);
-  overflow: visible;
-}
-.cover-period {
-  letter-spacing: -.12em;
-}
-.cover-lower {
-  flex: 1;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 28px;
-  padding: 24px 3% 24px 0;
-}
-.cover-intro p {
-  font-size: clamp(22px,2.15vw,34px);
-  line-height: 1.2;
-  letter-spacing: -.04em;
-}
-.cover-link {
-  display: flex;
-  align-items: center;
-  gap: 28px;
-  border-bottom: 1px solid;
-  padding: 20px 0 10px;
-  font-size: 15px;
-  margin-top: 24px;
-}
-.cover-link:hover svg {
-  transform: translateY(4px);
-}
-.cover-link svg {
-  transition: transform var(--duration);
-}
-.study-aperture {
-  width: min(32vw,36dvh);
-  aspect-ratio: 1;
-  position: relative;
-  background: var(--accent);
-  transform: rotate(-9deg);
-  flex-shrink: 0;
-}
-.world-poster,.world-video {
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  inset: 0;
-  object-fit: cover;
-}
-.world-video:not([src]) {
-  display: none;
-}
-.cover-bottom {
-  border-top: 1px solid;
-  padding-top: 16px;
-}
-.about-layout {
-  height: 100%;
-  min-height: 70dvh;
-  display: grid;
-  grid-template-columns: 40% 1fr;
-  align-content: center;
-  gap: 4dvh 6%;
-}
-.about-origin {
-  align-self: start;
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-.about-intro h2 {
-  font-size: clamp(42px,6.4vw,100px);
-}
-.about-intro h2 span {
-  color: var(--accent);
-}
-.about-intro p {
-  max-width: 420px;
-  font-size: 20px;
-  line-height: 1.5;
-  letter-spacing: -.02em;
-  margin: 26px 0 18px;
-}
-.about-strip {
-  grid-column: 1 / -1;
-  margin-top: 2dvh;
-  background: var(--accent);
-  color: var(--background);
-  padding: 20px 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 20px;
-}
-.about-strip>span:first-child {
-  font-size: 26px;
-  letter-spacing: -.04em;
 }
 /* Vengeance SolarSystem orbit and inverse billboard transforms. */
 .toolkit-layout {
@@ -465,7 +327,7 @@ h2 {
 .orbit-visible :is(.solar-position,.solar-billboard) {
   animation-play-state: running;
 }
-.solar-system:is([data-paused=true],.page-hidden) :is(.solar-position,.solar-billboard),.solar-system:has(button:is(:hover,:focus-visible)) :is(.solar-position,.solar-billboard) {
+.solar-system:is([data-paused=true],.page-hidden) :is(.solar-position,.solar-billboard),.solar-system:has(button:is(:hover,:focus-visible)) :is(.solar-position,.solar-billboard),.lenis-scrolling .solar-system :is(.solar-position,.solar-billboard) {
   animation-play-state: paused;
 }
 @keyframes solar-orbit {
@@ -1273,15 +1135,9 @@ textarea {
   padding: 20px 100px;
 }
 @media(min-width:1024px) and (max-height:760px) {
-  .cover-name {
-    font-size: min(22.4vw, 38dvh);
-  }
   .scene {
     padding-top: 34px;
     padding-bottom: 34px;
-  }
-  .about-intro h2 {
-    font-size: 5.5vw;
   }
   .toolkit-panel {
     padding: 22px;
@@ -1351,21 +1207,6 @@ textarea {
   .dock-tooltip-surface {
     transform: translateX(-50%);
   }
-  .cover-name {
-    font-size: 25vw;
-  }
-  .cover-lower {
-    min-height: 40dvh;
-  }
-  .study-aperture {
-    width: min(35vw,35dvh);
-  }
-  .about-layout {
-    min-height: 76dvh;
-  }
-  .about-intro h2 {
-    font-size: 7vw;
-  }
   .toolkit-layout {
     gap: 24px;
     grid-template-columns: 1fr;
@@ -1415,77 +1256,6 @@ textarea {
   }
   .mono {
     font-size: 10px;
-  }
-  .cover-top {
-    padding-bottom: 15px;
-  }
-  .cover-name {
-    font-size: 25vw;
-    margin: 26px 0 0;
-  }
-  .cover-lower {
-    flex-direction: column;
-    align-items: start;
-    justify-content: start;
-    gap: 32px;
-    padding: 28px 0 26px;
-  }
-  .cover-intro p {
-    font-size: 23px;
-  }
-  .cover-link {
-    margin-top: 8px;
-    gap: 36px;
-    padding-top: 14px;
-  }
-  .study-aperture {
-    width: min(58vw,29dvh);
-    align-self: end;
-    margin-right: 12px;
-  }
-  .cover-bottom {
-    gap: 14px;
-    align-items: start;
-  }
-  .cover-bottom>.mono:last-child {
-    max-width: 136px;
-    text-align: right;
-  }
-  .about-layout {
-    display: flex;
-    flex-direction: column;
-    gap: 40px;
-  }
-  .about-origin {
-    flex-direction: row;
-    align-items: end;
-    gap: 24px;
-  }
-  .about-origin .mono {
-    max-width: 90px;
-    margin-bottom: 7px;
-  }
-  .about-intro h2 {
-    font-size: 15vw;
-  }
-  .about-intro p {
-    font-size: 18px;
-    margin: 22px 0 12px;
-  }
-  .about-strip {
-    width: calc(100% + 44px);
-    margin-left: -22px;
-    padding: 20px 22px;
-    gap: 14px;
-  }
-  .about-strip>span:first-child {
-    font-size: 21px;
-  }
-  .about-strip .mono {
-    max-width: 110px;
-  }
-  .about-strip>svg {
-    display: none;
   }
   .toolkit-heading h2 {
     font-size: 15vw;
@@ -1808,7 +1578,6 @@ textarea {
 .work-more > a { min-height: 32px; display: inline-flex; gap: 7px; align-items: center; font-size: 12px; color: #c5c5bd; }
 .work-more > a:hover { color: var(--accent); }
 @media (max-width: 1023px) {
-  .cover-scroll-note { display: none; }
   .chapter-seam { display: none !important; }
 }
 @media (max-width: 767px) {
@@ -1820,21 +1589,101 @@ textarea {
   .finance-word { top: 28%; }
   .finance-route { bottom: 28%; }
   .finance-caption { bottom: 17%; font-size: 8px; }
-  .origin-mark { max-width: 220px; }
-  .about-strip > span:first-child { font-size: 21px; }
 }
-.study-unfold { display: none; }
-@media (max-width: 1023px) {
-  .study-aperture .world-poster { opacity: 0; }
-  .study-unfold { position: absolute; inset: 0; width: 100%; height: 100%; display: grid; place-items: center; padding: 22%; color: var(--background); }
-  .study-unfold > svg { width: 100%; overflow: visible; }
-  .study-unfold > span { position: absolute; bottom: 7%; left: 0; width: 100%; font-size: 8px; letter-spacing: .03em; }
-  .study-unfold .identity-fold { transform-origin: center; transform-box: fill-box; transition: transform var(--duration) var(--ease); }
-  .study-unfold[data-unfolded='true'] .identity-fold:nth-child(1) { transform: translate(-28px, 10px) rotate(-28deg); }
-  .study-unfold[data-unfolded='true'] .identity-fold:nth-child(2) { transform: translate(28px, -10px) rotate(28deg); }
-  .study-unfold[data-unfolded='true'] .identity-fold:nth-child(3) { transform: translateY(36px) rotate(-18deg); }
+/* Anime frames: static masks, one scroll-driven camera, no per-frame layout. */
+.cover-top,.cover-bottom { display:flex; justify-content:space-between; align-items:center; gap:20px; position:relative; z-index:2; }
+.cover-top { border-bottom:1px solid; padding-bottom:20px; }
+.hero-signature { font:600 32px/.9 var(--font-sans); letter-spacing:-.08em; }
+.hero-signature span { font-size:18px; margin-left:5px; vertical-align:top; }
+.cover-top > .mono { text-align:right; }
+.anime-cover { flex:1; min-height:0; display:grid; grid-template-columns:1.05fr 1fr; position:relative; gap:3%; padding:5dvh 0; }
+.cover-intro { align-self:center; position:relative; z-index:2; }
+.hero-kicker { display:block; margin-bottom:24px; font-size:9px; }
+.cover-intro h1 { font:400 clamp(60px,7.1vw,114px)/.94 var(--font-display),sans-serif; letter-spacing:-.065em; }
+.cover-intro h1 > span { color:#b83222; }
+.cover-intro p { font-size:clamp(17px,1.5vw,23px); line-height:1.38; letter-spacing:-.025em; margin-top:30px; }
+.cover-link { display:flex; align-items:center; justify-content:space-between; width:min(280px,100%); min-height:48px; border-bottom:1px solid; font-size:14px; margin-top:28px; }
+.cover-link svg { transition:transform var(--duration) var(--ease); }
+@media(hover:hover) { .cover-link:hover svg { transform:translateY(4px); } }
+.anime-composition { position:relative; min-height:380px; align-self:stretch; }
+.anime-city { position:absolute; inset:0 0 8% 6%; overflow:hidden; clip-path:polygon(15% 0,100% 0,100% 100%,0 100%); background:#24272d; }
+.anime-city img { object-fit:cover; object-position:62% center; transform:scale(1.14); }
+.anime-frame-label { position:absolute; right:15px; top:15px; color:#fff; background:#101317; padding:6px 8px; font-size:8px; }
+.anime-film { position:absolute; left:-16%; right:8%; bottom:3%; height:40%; min-height:150px; background:#090909; border:6px solid var(--foreground); transform:rotate(-7deg); overflow:hidden; }
+.world-poster,.world-video { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+.world-video { opacity:0; }
+.world-video[data-ready='true'] { opacity:1; }
+.world-video:not([src]) { display:none; }
+.anime-film-corner { position:absolute; right:12px; bottom:10px; font-size:26px; color:#fff; }
+.anime-index { position:absolute; left:2%; top:4%; font:400 clamp(70px,9vw,140px)/1 var(--font-display); color:var(--foreground); -webkit-text-stroke:1px #050505; }
+.anime-play { position:absolute; bottom:10px; left:10px; min-height:44px; padding:0 12px; background:var(--foreground); color:var(--background); display:flex; align-items:center; gap:18px; }
+.cinematic .anime-play { display:none; }
+.cover-bottom { padding-top:12px; border-top:1px solid; min-height:44px; }
+.cover-scroll-note { margin:0; font-size:9px; }
+.visual-credits { display:flex; align-items:center; gap:6px; min-height:44px; font-size:9px; }
+.about-layout { height:100%; display:grid; grid-template-columns:40% 1fr; align-content:center; gap:4dvh 7%; }
+.about-art { margin:0; min-width:0; align-self:stretch; display:flex; flex-direction:column; }
+.about-art-image { flex:1; min-height:300px; position:relative; overflow:hidden; background:#20232d; clip-path:polygon(0 0,100% 7%,100% 100%,0 93%); }
+.about-art-image img { object-fit:cover; object-position:center; }
+.about-art figcaption { font-size:8px; color:#bbbcbf; margin-top:18px; line-height:1.5; }
+.about-intro > .mono { display:block; margin-bottom:22px; color:var(--accent); }
+.about-intro h2 { font-size:clamp(48px,5.5vw,82px); }
+.about-intro h2 span { color:var(--accent); }
+.about-intro p { max-width:460px; font-size:clamp(17px,1.45vw,21px); line-height:1.5; letter-spacing:-.02em; margin:26px 0 18px; }
+.about-strip { grid-column:1/-1; border-top:1px solid var(--border); padding-top:18px; display:flex; align-items:center; justify-content:space-between; gap:20px; }
+.about-strip > span:first-child { font-size:20px; line-height:1.25; letter-spacing:-.035em; }
+.chapter-stack .scene { background:var(--foreground); }
+.cinematic .project-slide { padding:0 16px; }
+.media-credits { padding:40px 0 20px; max-width:780px; }
+.media-credits h2 { font-size:clamp(40px,6vw,80px); margin:20px 0 30px; }
+.media-credits h3 { font-size:24px; margin:28px 0 12px; }
+.media-credits p { font-size:17px; line-height:1.65; }
+.media-credits a { text-decoration:underline; text-underline-offset:4px; }
+@media(min-width:1024px) and (max-height:760px) {
+  .anime-cover { padding:3dvh 0; }
+  .cover-intro h1 { font-size:clamp(60px,7.1vw,104px); }
+  .cover-intro p { margin-top:20px; }
+  .anime-composition { min-height:300px; }
+  .hero-kicker { margin-bottom:16px; }
+  .about-art-image { min-height:240px; }
+  .about-intro h2 { font-size:clamp(48px,5vw,70px); }
+  .about-intro p { margin:20px 0 10px; }
 }
-@media (prefers-reduced-motion: reduce) {
-  .study-unfold { display: none; }
-  .study-aperture .world-poster { opacity: 1; }
+@media(max-width:1023px) {
+  .anime-cover { min-height:560px; padding:50px 0; }
+  .cover-intro h1 { font-size:clamp(70px,9vw,110px); }
+  .anime-composition { min-height:350px; }
+  .about-layout { min-height:72dvh; height:auto; }
+  .about-intro h2 { font-size:6vw; }
+  .cover-scroll-note { display:none; }
 }
+@media(max-width:767px) {
+  .chapter-hero .scene { padding-top:24px; }
+  .cover-top { padding-bottom:18px; }
+  .hero-signature { font-size:28px; }
+  .cover-top > .mono { font-size:8px; }
+  .anime-cover { display:flex; flex-direction:column; gap:28px; padding:34px 0 22px; min-height:0; }
+  .cover-intro { align-self:start; width:100%; }
+  .hero-kicker { font-size:8px; margin-bottom:18px; }
+  .cover-intro h1 { font-size:clamp(42px,13.3vw,102px); }
+  .cover-intro p { font-size:17px; margin-top:20px; }
+  .cover-link { margin-top:18px; width:100%; }
+  .anime-composition { min-height:320px; width:100%; }
+  .anime-city { inset:0 0 10% 8%; }
+  .anime-film { left:0; right:4%; bottom:4%; height:45%; min-height:120px; border-width:4px; transform:rotate(-5deg); }
+  .anime-index { font-size:74px; top:8%; }
+  .anime-frame-label { right:8px; font-size:7px; }
+  .cover-bottom { gap:12px; }
+  .cover-bottom > .mono { font-size:8px; }
+  .about-layout { display:flex; flex-direction:column; gap:36px; min-height:0; }
+  .about-art { width:82%; }
+  .about-art-image { flex:auto; min-height:0; height:380px; }
+  .about-art figcaption { font-size:7px; }
+  .about-intro h2 { font-size:13.5vw; }
+  .about-intro p { font-size:18px; margin-top:24px; }
+  .about-strip { width:100%; padding-top:20px; gap:12px; }
+  .about-strip > span:first-child { font-size:18px; }
+  .about-strip > .mono { max-width:110px; font-size:9px; }
+  .about-strip svg { display:none; }
+}
+@media(prefers-reduced-motion:reduce) { .anime-play { display:none; } }

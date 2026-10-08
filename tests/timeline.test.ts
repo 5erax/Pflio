@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { checkpoints, chapterAt, projectAt, smoothProgress, mediaTime } from '../src/lib/timeline.ts';
+import { checkpoints, chapterAt, projectAt, projectPosition, mediaTime } from '../src/lib/timeline.ts';
 import { validateContact } from '../src/lib/contact-validation.ts';
 
 test('one contiguous timeline drives chapters, project boundaries, and safe reversible media seeks', () => {
@@ -12,8 +12,9 @@ test('one contiguous timeline drives chapters, project boundaries, and safe reve
   assert.equal(projectAt(0.45, 3), 0);
   assert.equal(projectAt(0.56, 3), 1);
   assert.equal(projectAt(0.75, 3), 2);
-  assert.ok(smoothProgress(0.5, 1, 1 / 60) > 0.5);
-  assert.ok(smoothProgress(0.5, 0, 1 / 60) < 0.5);
+  assert.ok(projectPosition(0.50, 3) > 0 && projectPosition(0.50, 3) < 1);
+  assert.equal(projectPosition(0.64, 3), 2);
+  assert.equal(projectPosition(0.50, 1), 0);
   assert.equal(mediaTime(-1, 4), 0);
   assert.ok(mediaTime(2, 4) < 4);
   assert.equal(mediaTime(1, 0), 0);

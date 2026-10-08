@@ -1,44 +1,38 @@
-# Verification / 2026-10-08
+# Verification — 2026-10-08
 
-## Cut-ribbon motion revision
+Validated the production build at `http://localhost:3000` using isolated Chromium sessions. No external contact message was sent.
 
-The six-arm asterisk, artificial boot screen, generic fade entrances and invented first-project narrative were removed. The custom open A has three folded ribbons; cut lettering, chapter shutters and project artwork share one motion language. Personal content now follows the GitHub profile README and linked project README files.
+## Build and browser behavior
 
-## Passed on the final production build
+- `npm run check`, `npm test` (2 checks), and `npm run build`: passed.
+- `tools/verify-motion.mjs`: passed. Forward/backward anime camera follows the same position; video stays paused while seeking. The gallery produces intermediate positions during continuous wheel input instead of waiting for project index changes.
+- Keyboard End selects FinGenie and opens its actual case detail. Escape closes native dialogs. Visual credits are reachable and focus returns to the trigger.
+- Live reduced-motion changes remove cinematic transforms, unload the video and retain normal flow. Mobile downloads no video automatically; Play/Pause works and leaving the hero pauses playback.
+- Save-Data skips video loading. An intentionally failed MP4 request leaves the static poster visible.
+- Responsive inspection: all six chapters at 320×844, 390×844, 768×900, 1024×720, 1440×720 and 1440×900. 36 states passed without horizontal overflow or clipped desktop content. Scoped axe WCAG 2 A/AA and 2.1 AA checks returned zero violations; zero uncaught runtime errors.
 
-- TypeScript check, optimized production build, both native Node tests and diff whitespace checks.
-- `tools/verify-motion.mjs`: lettering visibly separates at master progress 0.017 and reassembles before the hero unpins; reversing to the same progress restores every band's position within 1px. Returning to zero restores the media frame within 0.1s. The video remains paused throughout.
-- Actual chapter navigation advances the six-second study to about 5.967s, then seeks back to about 0.016s at Start. The hero study is mapped to the held cover interval rather than waiting until the cover has left the screen.
-- Live reduced-motion changes remove chapter transforms, hide shutters, unload video and switch to normal flow. Switching back restores the centralized timeline.
-- Static fallback inspection caught an old asterisk in the image-optimizer cache. A content-hashed static import fixes the source of stale delivery. The real-browser check verifies the new poster's pixels; reduced-motion visual inspection confirms the open A.
-- Mobile tap-to-unfold and reassemble updates `aria-pressed`, uses the authored SVG geometry and does not load the video. Reduced motion hides that control and retains static art.
-- All six scenes at 320x844, 390x844, 768x900, 1024x720, 1440x720 and 1440x900: 36 layout states, no horizontal overflow, scanned desktop content within the frame, zero runtime errors.
-- Real project gallery at 390px and 1440px: ProZ0, MediMate AI and FinGenie centered at all three indices, measured center error 0px. Previous/Next, Home/End/Left/Right, touch gestures and mouse dragging work. Dragging suppresses the subsequent card click.
-- The selected project opens its own correct story and repository link. Native dialogs contain focus, close with Escape, restore focus and preserve scroll position.
-- Toolkit keyboard selection, orbit pause/resume, journal date selection and roving Experience/Education/Now tabs remain functional. The sourced orbit mechanics and pointer layers are retained.
-- Desktop/mobile complete-flow Axe A/AA scans, all 36 chapter scans, gallery states and dialogs: zero violations in scanned states. A separate 320px WCAG 2.2 scan and target-size check also pass. These checks are not a full manual accessibility certification.
-- Contact validation, explicit unconfigured delivery failure, retained draft and Save draft remain functional. Direct public email and LinkedIn links now come from the profile README. No external message was sent. The unchanged server boundary previously passed provider acceptance/failure and origin-rejection checks against a local mock.
-- Original media generator: H.264, 960 square, 180 frames, six seconds, 30fps, 45 keyframes, GOP4, fast-start metadata, full decode, changing fold geometry, safe padding, forward/reverse seek samples and exact repeated first-frame decoding. Video: 518,548 bytes; poster: 8,902 bytes.
+## Continuous scroll measurement
 
-## Final isolated Lighthouse mobile lab run
+Same production-browser probe and 1440×900 viewport before/after: 110 wheel inputs of 85 px, 55 ms between inputs, then 900 ms settling. RAF records scroll position and gallery transform; PerformanceObserver records long tasks. Both runs reached the full 8,100 px scroll range.
 
-| Category | Score |
-| --- | ---: |
-| Performance | 95 |
-| Accessibility | 100 |
-| Best practices | 100 |
-| SEO | 100 |
+| Observed measurement | Previous build | Revised pipeline |
+| --- | ---: | ---: |
+| Median frame interval | 16.7 ms | 16.7 ms |
+| 95th percentile frame interval | 33.4 ms | 33.3 ms |
+| Frames above 33.4 ms | 23 | 8 |
+| Frames above 50 ms | 3 | 0 |
+| JavaScript long tasks above 50 ms | 4 | 0 |
 
-| Metric | Measured |
-| --- | ---: |
-| Largest Contentful Paint | 2.9 s |
-| Total Blocking Time | 30 ms |
-| Cumulative Layout Shift | 0 |
+The gallery previously stayed still in 55 sampled frames while scroll position advanced within the measured work interval. The continuous-motion correction reduced that count to zero. A runnable regression now checks that intermediate gallery movement follows wheel input.
 
-Visible label/accessibility-name matching and target-size audits pass after the mobile toggle correction. Measurements use simulated mobile conditions on the local production server; LCP remains above 2.5s. Field INP, hosting conditions, physical-device smoothness and low-end video decoding have not been measured.
+These are individual measurements on this host, not a guarantee of uninterrupted 60 fps on every device. The remaining delayed frames and unchanged 95th percentile are recorded explicitly. Headless recording and the instrumentation itself add overhead.
 
-## Delivery
+## Media and review
 
-`README.md` documents the factual GitHub sources, authored motion, optional browser check and media regeneration. `THIRD_PARTY_NOTICES.md` preserves all source component licenses and identifies the owner's original project covers. No runtime dependency was added.
+Local anime assets total 947,130 bytes: city WebP 135,966; Marya WebP 90,952; eye poster 19,134; seekable MP4 701,078. The three-second excerpt contains 90 frames and excludes the bright white scene cut. Static Next image imports give changed artwork new content filenames.
 
-The actual browser recording is delivered as `astraa-motion-preview.webm`, alongside current screenshots and a source ZIP. The portfolio remains locally committed on `feat/cinematic-portfolio`, without a push or public deployment. The preview is http://localhost:3000/?motion=2 while the local server is running. Direct email works; the optional form receiver still needs its webhook configuration.
+Media provenance, attribution, license links and adaptation details are retained in the application and THIRD_PARTY_NOTICES.md. The film excerpt and poster are CC BY-SA 4.0 adaptations; the gallery artworks are CC BY 4.0. Project artwork remains Astraa's original profile material.
+
+React review checked transient values in refs, discrete state updates, stable effect dependencies, cleanup, no layout reads per animation frame, and native accessible controls. No additional runtime dependency was introduced.
+
+The source archive is exported from the committed tree and excludes node_modules, build output, private environment files and scratch research downloads. The browser recording and responsive screenshots are separate preview artifacts.

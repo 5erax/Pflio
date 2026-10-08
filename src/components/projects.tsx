@@ -11,21 +11,17 @@ import { Dialog } from './ui/dialog';
 // The moving flex track, per-slide perspective, controlled selection, and spring are retained.
 // The upstream license is included in THIRD_PARTY_NOTICES.md.
 
-function ProjectArtwork({ plateIndex, active = true }: { plateIndex: number; active?: boolean }) {
+function ProjectArtwork({ plateIndex }: { plateIndex: number }) {
   const project = projects[plateIndex];
-  const reduce = useReducedMotion();
   return <span className={`project-artwork work-plate project-cover project-cover-${project.slug}`} aria-hidden="true">
-    {Array.from({ length: 5 }, (_, band) => <motion.span key={band} className="project-art-band"
-      style={{ clipPath: `inset(0 ${100 - (band + 1) * 20}% 0 ${band * 20}%)` }}
-      animate={{ transform: active || reduce ? 'translateY(0)' : `translateY(${band % 2 ? -16 : 16}%)` }}
-      transition={reduce ? { duration: 0 } : { type: 'spring', duration: 0.5, bounce: 0.2, delay: band * 0.035 }}>
+    <span className="project-art-band">
       {project.cover ? <img src={project.cover} alt="" loading="lazy" width={1280} height={500} draggable={false} /> :
         <span className="finance-art"><span className="finance-word">FinGenie<span>↗</span></span><span className="finance-route"><span>web/</span><span>api/</span><span>mobile/</span></span><span className="finance-caption">PERSONAL FINANCE, CONNECTED.</span></span>}
-    </motion.span>)}
+    </span>
   </span>;
 }
 
-export function ProjectGallery({ active, select, open }: { active: number; select: (index: number) => void; open: (index: number) => void }) {
+export function ProjectGallery({ active, cinematic = false, select, open }: { active: number; cinematic?: boolean; select: (index: number) => void; open: (index: number) => void }) {
   const stage = useRef<HTMLDivElement>(null);
   const pointer = useRef<{ x: number; id: number } | null>(null);
   const dragged = useRef(false);
@@ -65,15 +61,15 @@ export function ProjectGallery({ active, select, open }: { active: number; selec
     onPointerCancel={() => { pointer.current = null; }}>
     <div ref={stage} className="gallery-stage" style={{ perspective: '1200px', overflow: 'hidden' }}>
       <motion.div className="perspective-track" style={{ position: 'absolute', left: '50%', top: '50%', y: '-50%', display: 'flex', width: 'max-content', height: '100%', alignItems: 'center' }}
-        animate={{ x: -(currentIndex * slideWidth + slideWidth / 2) }} transition={transition}>
+        animate={cinematic ? undefined : { x: -(currentIndex * slideWidth + slideWidth / 2) }} transition={transition}>
         {projects.map((plate, index) => {
           const isActive = currentIndex === index;
           return <div key={plate.slug} className="project-slot" style={{ width: slideWidth, height: '100%', flexShrink: 0, perspective: '1200px' }} aria-hidden={!isActive}>
             <motion.div className={`project-slide ${isActive ? 'current' : ''}`}
-              animate={{ rotateY: reduce ? 0 : (currentIndex - index) * 38, scale: isActive ? 1 : 0.85 }}
+              animate={cinematic ? undefined : { rotateY: reduce ? 0 : (currentIndex - index) * 38, scale: isActive ? 1 : 0.85 }}
               transition={transition} style={{ transformStyle: 'preserve-3d' }}>
               <motion.div className={`project-visual work-plate-${index}`} whileHover={reduce || !isActive ? undefined : { y: -4 }} transition={transition}>
-                <ProjectArtwork plateIndex={index} active={isActive} />
+                <ProjectArtwork plateIndex={index} />
                 <span className="project-visual-top"><span>{plate.status.toUpperCase()}</span><ArrowUpRight size={22} aria-hidden /></span>
                 <span className="project-visual-bottom"><span>0{index + 1} / {plate.name.toUpperCase()}</span><span>{plate.year}</span></span>
                 <button type="button" className="project-open" tabIndex={isActive ? 0 : -1} aria-current={isActive ? 'true' : undefined}
